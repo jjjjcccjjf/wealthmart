@@ -3,20 +3,11 @@
 Template Name: Advisor Account
 */
 
-/**
-* load our custom classes
-* @author: @jjjjcccjjf
-*/
-include 'classes/Advisor.php';
-
 global $style;
-
-
-$current_user = wp_get_current_user();
 
 if($_POST){
 	$detail_data = array();
-	$detail_data['ID'] = $current_user->ID;
+	$detail_data['ID'] = $GLOBALS['current_user']->ID;
 	$detail_data['position'] = $_POST['position'];
 	$detail_data['address'] = $_POST['address'];
 	$detail_data['contact'] = $_POST['contact'];
@@ -60,11 +51,11 @@ if($_POST){
 	$detail_data['award'] = $_POST['award'];
 	$detail_data['rates'] = $_POST['rates'];
 
-	$details_exists = $wpdb->get_var("SELECT COUNT(*) FROM advisor_details WHERE ID = ".$current_user->ID);
+	$details_exists = $wpdb->get_var("SELECT COUNT(*) FROM advisor_details WHERE ID = ".$GLOBALS['current_user']->ID);
 	if($details_exists == 0){
 		$wpdb->insert('advisor_details', $detail_data);
 	}else{
-		$wpdb->update('advisor_details', $detail_data, array('ID' => $current_user->ID));
+		$wpdb->update('advisor_details', $detail_data, array('ID' => $GLOBALS['current_user']->ID));
 	}
 
 
@@ -73,21 +64,40 @@ if($_POST){
 $blog_style = get_theme_mod( 'content-blog-style', 'default' );
 $style = 'grid-standard' == $blog_style ? 'standard' : 'cover';
 
+/**
+ * /classes folder are loaded inside the header
+ * @var [type]
+ */
 get_header();
 
-$current_user_data = $wpdb->get_row('SELECT * FROM advisor_details WHERE ID = '.$current_user->ID, ARRAY_A);
+if($GLOBALS['current_user']->roles[0] == 'pending_vendor'){
+	$cudata = $wpdb->get_row('SELECT * FROM advisor_details WHERE ID = '.$GLOBALS['current_user']->ID, ARRAY_A);
+	var_dump('advisor'); die();
+}elseif($GLOBALS['current_user']->roles[0] == 'customer'){
+	var_dump('customer'); die();
+}else{
+	var_dump('other'); die();
+}
 
-
+$details_exists = $wpdb->get_var("SELECT COUNT(*) FROM advisor_details WHERE ID = ".$GLOBALS['current_user']->ID);
+// var_dump($GLOBALS['current_user']->roles[0]);
+// var_dump($GLOBALS['current_user']->roles[0]);
+// die();
 
 ?>
 <form method="POST">
 	<div class="container">
 		<section class="listing-banner" style="background: url(<?php echo theme_url; ?>images/bannerimg.jpg) no-repeat center center; background-size: cover;">
 			<aside>
-				<h1><?php echo $current_user->display_name; ?> <span>Verified <i class="fa fa-check" aria-hidden="true"></i></span></h1>
+				<h1><?php echo $GLOBALS['current_user']->display_name; ?>
+					&nbsp;
+					<?php if($cudata['is_verified']):?>
+					<span>Verified <i class="fa fa-check" aria-hidden="true"></i></span>
+				<?php endif;?>
+				</h1>
 				<h4>Quezon City</h4>
 				<h4>NCR</h4>
-				<p><?php if($current_user_data){ echo $current_user_data['expertise']; } ?></p>
+				<p><?php if($cudata){ echo $cudata['expertise']; } ?></p>
 				<fieldset class="rating">
 					<input type="radio" id="star5" name="rating" value="5" /><label class = "full" for="star5" title="Awesome - 5 stars"></label>
 					<input type="radio" id="star4half" name="rating" value="4 and a half" /><label class="half" for="star4half" title="Pretty good - 4.5 stars"></label>
@@ -110,14 +120,14 @@ $current_user_data = $wpdb->get_row('SELECT * FROM advisor_details WHERE ID = '.
 					<img src="images/profile-pic.jpg">
 				</div>
 				<div class="agent-details">
-					<h4><input type="text" name="position" placeholder="Position" <?php if($current_user_data){ ?>value="<?php echo $current_user_data['position']; ?>"<?php } ?>></h4>
+					<h4><input type="text" name="position" placeholder="Position" <?php if($cudata){ ?>value="<?php echo $cudata['position']; ?>"<?php } ?>></h4>
 					<ul>
 						<li><i class="fa fa-map-marker" aria-hidden="true"></i>
-							<input type="text" placeholder="Address" name="address" <?php if($current_user_data){ ?>value="<?php echo $current_user_data['address']; ?>"<?php } ?>>
+							<input type="text" placeholder="Address" name="address" <?php if($cudata){ ?>value="<?php echo $cudata['address']; ?>"<?php } ?>>
 						</li>
-						<li><i class="fa fa-phone" aria-hidden="true"></i> <input type="text" placeholder="Contact Number" name="contact" <?php if($current_user_data){ ?>value="<?php echo $current_user_data['contact']; ?>"<?php } ?>>
+						<li><i class="fa fa-phone" aria-hidden="true"></i> <input type="text" placeholder="Contact Number" name="contact" <?php if($cudata){ ?>value="<?php echo $cudata['contact']; ?>"<?php } ?>>
 						</li>
-						<li><i class="fa fa-envelope" aria-hidden="true"></i><?php echo $current_user->user_email; ?>
+						<li><i class="fa fa-envelope" aria-hidden="true"></i><?php echo $GLOBALS['current_user']->user_email; ?>
 						</li>
 					</ul>
 
@@ -136,7 +146,7 @@ $current_user_data = $wpdb->get_row('SELECT * FROM advisor_details WHERE ID = '.
 			</button> -->
 		</h3>
 		<section class="agent-content">
-			<textarea name="experience"><?php if($current_user_data){ echo $current_user_data['experience']; } ?></textarea>
+			<textarea name="experience"><?php if($cudata){ echo $cudata['experience']; } ?></textarea>
 		</section>
 
 		<hr>
@@ -157,8 +167,8 @@ $current_user_data = $wpdb->get_row('SELECT * FROM advisor_details WHERE ID = '.
 
 	$other_license = "";
 	$user_licenses_arr = array();
-	if($current_user_data){
-		$user_licenses = explode(",", $current_user_data['license']);
+	if($cudata){
+		$user_licenses = explode(",", $cudata['license']);
 		foreach($user_licenses as $user_license){
 			if(in_array($user_license, $licenses)){
 				$user_licenses_arr[] = $user_license;
@@ -203,8 +213,8 @@ $current_user_data = $wpdb->get_row('SELECT * FROM advisor_details WHERE ID = '.
 
 	$other_expertise = "";
 	$user_expertise_arr = array();
-	if($current_user_data){
-		$user_expertise = explode(",", $current_user_data['expertise']);
+	if($cudata){
+		$user_expertise = explode(",", $cudata['expertise']);
 		foreach($user_expertise as $user_field){
 			if(in_array($user_field, $expertise)){
 				$user_expertise_arr[] = $user_field;
@@ -243,7 +253,7 @@ $current_user_data = $wpdb->get_row('SELECT * FROM advisor_details WHERE ID = '.
 		</button>-->
 	</h3>
 	<section class="agent-content">
-		<textarea name="award"><?php if($current_user_data){ echo $current_user_data['award']; } ?></textarea>
+		<textarea name="award"><?php if($cudata){ echo $cudata['award']; } ?></textarea>
 	</section>
 	<hr>
 
@@ -315,7 +325,7 @@ $current_user_data = $wpdb->get_row('SELECT * FROM advisor_details WHERE ID = '.
 </button>-->
 </h3>
 <section class="agent-content">
-	<textarea name="rates"><?php if($current_user_data){ echo $current_user_data['rates']; } ?></textarea>
+	<textarea name="rates"><?php if($cudata){ echo $cudata['rates']; } ?></textarea>
 </section>
 <hr>
 

@@ -6,6 +6,19 @@
 *
 * @package Listify
 */
+
+/**
+* load our custom classes. Order is important!
+* Advisor inherits from User
+* Customer inherits from User
+* @author: @jjjjcccjjf
+*/
+include 'classes/User.php';
+include 'classes/Advisor.php';
+include 'classes/Customer.php';
+
+$GLOBALS['current_user'] = wp_get_current_user();
+
 define("theme_url", get_template_directory_uri()."/");
 ?><!DOCTYPE html>
 <html <?php language_attributes(); ?>>

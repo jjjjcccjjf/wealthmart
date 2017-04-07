@@ -1,10 +1,12 @@
 <?php
 
-class Advisor
+class Advisor extends User
 {
 
-    public function test($value='')
+    public function test()
     {
-      var_dump('nig');
+      $current_user = wp_get_current_user();
+
+      var_dump($current_user);
     }
 }
