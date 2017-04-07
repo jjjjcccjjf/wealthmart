@@ -1,14 +1,14 @@
 <?php
 /**
- * The template for displaying the footer.
- *
- * Contains the closing of the #content div and all content after
- *
- * @package Listify
- */
+* The template for displaying the footer.
+*
+* Contains the closing of the #content div and all content after
+*
+* @package Listify
+*/
 ?>
 
-	</div><!-- #content -->
+</div><!-- #content -->
 
 </div><!-- #page -->
 
@@ -67,21 +67,21 @@
 
 <div id="ajax-response"></div>
 
-	<script src="https://use.fontawesome.com/108c9331e1.js"></script>
-    <script src="<?php echo theme_url; ?>js/jquery.min.js"></script>
-    <script src="<?php echo theme_url; ?>js/flickity.pkgd.min.js"></script>
-    
-    <script src="j<?php echo theme_url; ?>js/jquery.magnific-popup.js"></script>
-    
-    <script>
-      jQuery(document).ready(function($) {
-        
-        $('#open-popup').magnificPopup({
-              type:'image',
-              closeBtnInside: true
-            });
-      });
-    </script>
+<script src="https://use.fontawesome.com/108c9331e1.js"></script>
+<script src="<?php echo theme_url; ?>js/jquery.min.js"></script>
+<script src="<?php echo theme_url; ?>js/flickity.pkgd.min.js"></script>
+
+<script src="j<?php echo theme_url; ?>js/jquery.magnific-popup.js"></script>
+
+<script>
+jQuery(document).ready(function($) {
+
+	$('#open-popup').magnificPopup({
+		type:'image',
+		closeBtnInside: true
+	});
+});
+</script>
 
 <?php wp_footer(); ?>
 
