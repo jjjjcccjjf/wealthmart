@@ -35,7 +35,7 @@ if($_POST){
 
 	foreach($_POST['expertise'] as $selected){
 		if($selected == 'Others, pls specify'){
-			$expertise_to_add = $_POST['license_other'];
+			$expertise_to_add = $_POST['expert_other'];
 		}else{
 			$expertise_to_add = $selected;
 		}
@@ -127,7 +127,7 @@ $name = $first_name . " " . $last_name;
 					<?php endif;?>
 				</h1>
 				<h4><?php echo $cudata['address'] ?></h4>
-				<p><?php if($cudata){ echo $cudata['expertise']; } ?></p>
+				<p><?php if($cudata){ echo str_replace(',', ', ', $cudata['expertise']); } ?></p>
 				<fieldset class="rating">
 					<input type="radio" id="star5" name="rating" value="5" /><label class = "full" for="star5" title="Awesome - 5 stars"></label>
 					<input type="radio" id="star4half" name="rating" value="4 and a half" /><label class="half" for="star4half" title="Pretty good - 4.5 stars"></label>
@@ -271,7 +271,16 @@ $name = $first_name . " " . $last_name;
 		foreach($expertise as $field){
 			?>
 			<li>
-				<input type="checkbox" name="expertise[]" value="<?php echo $field; ?>" <?php if(($field == 'Others, pls specify' && in_array("Others", $user_expertise_arr)) || in_array($field, $user_expertise_arr)){ echo "checked"; } ?>> <?php echo $field; ?> <?php if($field == 'Others, pls specify'){ ?><input type="text" name="expert_other" value="<?php echo $other_expertise; ?>"><?php } ?></li>
+				<input type="checkbox" name="expertise[]" value="<?php echo $field; ?>"
+				<?php if(
+					($field == 'Others, pls specify' && in_array("Others", $user_expertise_arr)) ||
+					in_array($field, $user_expertise_arr)
+				){ echo "checked"; } ?>>
+				<?php echo $field; ?>
+				<?php if($field == 'Others, pls specify'){
+					?><input type="text" name="expert_other" value="<?php echo $other_expertise; ?>">
+					<?php } ?>
+				</li>
 
 				<?php } ?>
 			</section>
