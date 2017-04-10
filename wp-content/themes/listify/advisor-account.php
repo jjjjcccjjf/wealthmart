@@ -65,38 +65,68 @@ $blog_style = get_theme_mod( 'content-blog-style', 'default' );
 $style = 'grid-standard' == $blog_style ? 'standard' : 'cover';
 
 /**
- * /classes folder are loaded inside the header
- * @var [type]
- */
+* /classes folder are loaded inside the header
+* @var [type]
+*/
 get_header();
 
 if($GLOBALS['current_user']->roles[0] == 'pending_vendor'){
 	$cudata = $wpdb->get_row('SELECT * FROM advisor_details WHERE ID = '.$GLOBALS['current_user']->ID, ARRAY_A);
-	var_dump('advisor'); die();
 }elseif($GLOBALS['current_user']->roles[0] == 'customer'){
-	var_dump('customer'); die();
-}else{
-	var_dump('other'); die();
+	// dont show this to end users
+	?>
+	<div <?php echo apply_filters( 'listify_cover', 'page-cover' ); ?>>
+		<div class="cover-wrapper">
+			<h1 class="page-title"><?php _e( 'Oops! That page can&rsquo;t be found.', 'listify' ); ?></h1>
+		</div>
+	</div>
+	<div id="primary" class="container">
+		<div class="row content-area">
+			<main id="main" class="site-main col-md-10 col-md-offset-1 col-xs-12" role="main">
+				<?php get_template_part( 'content', 'none' ); ?>
+			</main>
+		</div>
+	</div>
+	<?php die();
+}else{ # Same here show 404 template ?>
+	<div <?php echo apply_filters( 'listify_cover', 'page-cover' ); ?>>
+		<div class="cover-wrapper">
+			<h1 class="page-title"><?php _e( 'Oops! That page can&rsquo;t be found.', 'listify' ); ?></h1>
+		</div>
+	</div>
+	<div id="primary" class="container">
+		<div class="row content-area">
+			<main id="main" class="site-main col-md-10 col-md-offset-1 col-xs-12" role="main">
+				<?php get_template_part( 'content', 'none' ); ?>
+			</main>
+		</div>
+	</div>
+	<?php
+	die();
 }
 
 $details_exists = $wpdb->get_var("SELECT COUNT(*) FROM advisor_details WHERE ID = ".$GLOBALS['current_user']->ID);
-// var_dump($GLOBALS['current_user']->roles[0]);
-// var_dump($GLOBALS['current_user']->roles[0]);
-// die();
+
+/**
+* can be edited in profile
+* @var string
+*/
+$first_name = get_user_meta($GLOBALS['current_user']->ID, 'first_name', true);
+$last_name = get_user_meta($GLOBALS['current_user']->ID, 'last_name', true);
+$name = $first_name . " " . $last_name;
 
 ?>
 <form method="POST">
 	<div class="container">
 		<section class="listing-banner" style="background: url(<?php echo theme_url; ?>images/bannerimg.jpg) no-repeat center center; background-size: cover;">
 			<aside>
-				<h1><?php echo $GLOBALS['current_user']->display_name; ?>
+				<h1><?php echo $name ?>
 					&nbsp;
 					<?php if($cudata['is_verified']):?>
-					<span>Verified <i class="fa fa-check" aria-hidden="true"></i></span>
-				<?php endif;?>
+						<span>Verified <i class="fa fa-check" aria-hidden="true"></i></span>
+					<?php endif;?>
 				</h1>
-				<h4>Quezon City</h4>
-				<h4>NCR</h4>
+				<h4><?php echo $cudata['address'] ?></h4>
 				<p><?php if($cudata){ echo $cudata['expertise']; } ?></p>
 				<fieldset class="rating">
 					<input type="radio" id="star5" name="rating" value="5" /><label class = "full" for="star5" title="Awesome - 5 stars"></label>
@@ -120,14 +150,18 @@ $details_exists = $wpdb->get_var("SELECT COUNT(*) FROM advisor_details WHERE ID 
 					<img src="images/profile-pic.jpg">
 				</div>
 				<div class="agent-details">
-					<h4><input type="text" name="position" placeholder="Position" <?php if($cudata){ ?>value="<?php echo $cudata['position']; ?>"<?php } ?>></h4>
 					<ul>
+						<li><i class="fa fa-user" aria-hidden="true"></i>
+							<input type="text" name="position" placeholder="Position" <?php if($cudata){ ?>value="<?php echo $cudata['position']; ?>"<?php } ?>>
+						</li>
 						<li><i class="fa fa-map-marker" aria-hidden="true"></i>
-							<input type="text" placeholder="Address" name="address" <?php if($cudata){ ?>value="<?php echo $cudata['address']; ?>"<?php } ?>>
+							<input type="text" placeholder="Address" name="address" <?php if($cudata){ ?>value="<?php echo $cudata['address']; ?>"<?php } ?> >
 						</li>
-						<li><i class="fa fa-phone" aria-hidden="true"></i> <input type="text" placeholder="Contact Number" name="contact" <?php if($cudata){ ?>value="<?php echo $cudata['contact']; ?>"<?php } ?>>
+						<li><i class="fa fa-phone" aria-hidden="true"></i>
+							<input type="text" placeholder="Contact Number" name="contact" <?php if($cudata){ ?>value="<?php echo $cudata['contact']; ?>"<?php } ?>>
 						</li>
-						<li><i class="fa fa-envelope" aria-hidden="true"></i><?php echo $GLOBALS['current_user']->user_email; ?>
+						<li><i class="fa fa-envelope" aria-hidden="true"></i>
+							<?php echo $GLOBALS['current_user']->user_email; ?>
 						</li>
 					</ul>
 
