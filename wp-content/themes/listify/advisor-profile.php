@@ -75,7 +75,7 @@ else:
       <section class="listing-details">
         <aside class="sidebar">
           <div class="profile-pic">
-            <img src="images/profile-pic.jpg">
+            <img src="<?php echo $advisor_details['listing_photo']?>">
           </div>
           <div class="agent-details">
             <h4><?php if($advisor_details){ echo $advisor_details['position']; } ?></h4>
