@@ -55,6 +55,13 @@ if($_POST){
 		}
 	}
 
+	if($_POST['video_gallery'] != ''){
+		$meta_data['ID'] = $GLOBALS['current_user']->ID;
+		$meta_data['meta_key'] = 'video_gallery';
+		$meta_data['meta_value'] = $_POST['video_gallery'];
+		$wpdb->insert('advisor_details_meta', $meta_data);
+	}
+
 	$detail_data = array();
 
 	/**
@@ -190,7 +197,6 @@ get_header();
 		<section class="listing-banner" style="background: url(<?php echo theme_url; ?>images/bannerimg.jpg) no-repeat center center; background-size: cover;">
 			<aside>
 				<h1><?php echo $name ?>
-					&nbsp;
 					<?php if($advisor_details['is_verified']):?>
 						<span>Verified <i class="fa fa-check" aria-hidden="true"></i></span>
 					<?php endif;?>
@@ -389,7 +395,7 @@ get_header();
 				if($meta['meta_key'] == 'photo_gallery'):
 					?>
 					<div class="carousel-cell" id="photo_gallery-<?php echo $meta['meta_id']?>">
-						<center><a href="javascript:void(0);" onclick="ajaxDelete(<?php echo $meta['meta_id']?>)"><i class="fa fa-minus-square" aria-hidden="true"></i> Delete</a></center>
+						<center><a href="javascript:void(0);" onclick="ajaxDeleteMeta(<?php echo $meta['meta_id']?>, 'photo_gallery')"><i class="fa fa-minus-square" aria-hidden="true"></i> Delete</a></center>
 						<img src="<?php echo $meta['meta_value']?>">
 					</div>
 					<?php
@@ -405,44 +411,49 @@ get_header();
 
 	<h3 class="video-label">
 		Video Gallery
-		<button>
-			<i class="fa fa-pencil-square" aria-hidden="true"></i> Add
-		</button>
-		<button>
-			<i class="fa fa-minus-square" aria-hidden="true"></i> Delete
-		</button>
-	</h3>
-	<div class="agent-vgallery">
-		<div class="videocarousel" data-flickity='{ "wrapAround": true }'>
-
-			<div class="carousel-cell">
-				<div class="video-container">
-					<iframe width="560" height="315" src="https://www.youtube.com/embed/L6CKuz5a65I" frameborder="0" allowfullscreen></iframe>
-				</div>
-			</div>
-			<div class="carousel-cell">
-				<div class="video-container">
-					<iframe width="560" height="315" src="https://www.youtube.com/embed/ZNebSeFVPNc" frameborder="0" allowfullscreen></iframe>
-				</div>
-			</div>
-			<div class="carousel-cell">
-				<div class="video-container">
-					<iframe width="560" height="315" src="https://www.youtube.com/embed/vpYkz5WU1Vg" frameborder="0" allowfullscreen></iframe>
-				</div>
-			</div>
-
-		</div>
-	</div>
-
-
-	<hr>
-
-	<h3>Rates per Consultation
-		<!--<button>
+		<!-- <button>
 		<i class="fa fa-pencil-square" aria-hidden="true"></i> Add
 	</button>
 	<button>
-	<i class="fa fa-plus-square" aria-hidden="true"></i> Edit
+	<i class="fa fa-minus-square" aria-hidden="true"></i> Delete
+</button> -->
+</h3>
+<div>
+	Add new YouTube video <br>
+	<sub>NOTE: Embed URL only. (e.g https://www.youtube.com/embed/dQw4w9WgXcQ)</sub> <br><br>
+	<input type="url" name="video_gallery" placeholder="YouTube Embed URL">
+</div>
+<div class="agent-vgallery">
+	<div class="videocarousel" data-flickity='{ "wrapAround": true }'>
+
+		<!-- VIDEO GALLERY  -->
+		<?php foreach($advisor_details_meta as $meta):
+			if($meta['meta_key'] == 'video_gallery'):
+				?>
+				<div class="carousel-cell" id="video_gallery-<?php echo $meta['meta_id']?>">
+					<center><a href="javascript:void(0);" onclick="ajaxDeleteMeta(<?php echo $meta['meta_id']?>, 'video_gallery')"><i class="fa fa-minus-square" aria-hidden="true"></i> Delete</a></center>
+					<div class="video-container">
+						<iframe width="560" height="315" src="<?php echo $meta['meta_value']?>" frameborder="0" allowfullscreen></iframe>
+					</div>
+				</div>
+				<?php
+			endif;
+		endforeach;?>
+		<!-- / VIDEO GALLERY  -->
+
+
+	</div>
+</div>
+
+
+<hr>
+
+<h3>Rates per Consultation
+	<!--<button>
+	<i class="fa fa-pencil-square" aria-hidden="true"></i> Add
+</button>
+<button>
+<i class="fa fa-plus-square" aria-hidden="true"></i> Edit
 </button>-->
 </h3>
 <section class="agent-content">
@@ -500,19 +511,24 @@ get_header();
 <script>
 $(document).ready(function(){
 
-	ajaxDelete = function(meta_id){
+	ajaxDeleteMeta = function(meta_id, meta_key){
 		$.ajax({
-			url:"<?php echo site_url(). "/wp-content/themes/listify/ajax/deletePhoto.php"?>",
+			url:"<?php echo site_url(). "/wp-content/themes/listify/ajax/deleteAdvisorMeta.php"?>",
 			type: "POST",
 			data: {'meta_id': meta_id},
 			success:function(data){
-				$("#photo_gallery-"+ meta_id).fadeOut(400, function(){
-					$("#photo_gallery-"+ meta_id).remove()
+				if(meta_key == 'video_gallery'){
+					$("#video_gallery-"+ meta_id).fadeOut(400, function(){
+						$("#video_gallery-"+ meta_id).remove()
+					});
+				}else if(meta_key == 'photo_gallery'){
+					$("#photo_gallery-"+ meta_id).fadeOut(400, function(){
+						$("#photo_gallery-"+ meta_id).remove()
+					});
 				}
-			);
-		}
-	});
-}
+			} // success end
+		}); // ajax end
+	} //function body end
 
 });
 </script>
