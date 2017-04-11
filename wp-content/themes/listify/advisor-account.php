@@ -3,10 +3,58 @@
 Template Name: Advisor Account
 */
 
+/**
+* /classes folder are loaded inside the header
+* @var [type]
+*/
+
 global $style;
 
 
 if($_POST){
+
+	$photo_gallery_size = 0;
+
+	/**
+	* c means counter
+	* @var integer
+	*/
+	$c = 0;
+	foreach($_FILES['photo_gallery']['size'] as $size){
+		$photo_gallery_size += $size;
+	}
+
+	/**
+	* check if photo for photo gallery is empty
+	*/
+	if($photo_gallery_size > 0){
+		$uploaddir = wp_upload_dir()['path'] . '/';
+
+		foreach($_FILES['photo_gallery']['name'] as $key => $value){
+
+			$fn = explode('.', $value);
+			$fn[0] .= time();
+
+			$new_file_name = implode('.', $fn);
+
+			$file = $uploaddir . $new_file_name;
+			$photo_gallery_url = wp_upload_dir()['url'] . '/' . $new_file_name;
+
+			$meta_data = array();
+			$raw_file_name = $_FILES['photo_gallery']['tmp_name'][$key];
+			if (move_uploaded_file($_FILES['photo_gallery']['tmp_name'][$key], $file)) {
+
+				$meta_data['ID'] = $GLOBALS['current_user']->ID;
+				$meta_data['meta_key'] = 'photo_gallery';
+				$meta_data['meta_value'] = $photo_gallery_url;
+				$wpdb->insert('advisor_details_meta', $meta_data);
+
+			} else {
+				echo "error";
+			}
+		}
+	}
+
 	$detail_data = array();
 
 	/**
@@ -82,20 +130,15 @@ if($_POST){
 		$wpdb->update('advisor_details', $detail_data, array('ID' => $GLOBALS['current_user']->ID));
 	}
 
-
+	header('Location: ' . site_url('advisor-account'));
 }
 
 $blog_style = get_theme_mod( 'content-blog-style', 'default' );
 $style = 'grid-standard' == $blog_style ? 'standard' : 'cover';
 
-/**
-* /classes folder are loaded inside the header
-* @var [type]
-*/
-get_header();
-
 if($GLOBALS['current_user']->roles[0] == 'pending_vendor'){
 	$advisor_details = $wpdb->get_row('SELECT * FROM advisor_details WHERE ID = '.$GLOBALS['current_user']->ID, ARRAY_A);
+	$advisor_details_meta = $wpdb->get_results('SELECT * FROM advisor_details_meta WHERE ID = '.$GLOBALS['current_user']->ID, ARRAY_A);
 }elseif($GLOBALS['current_user']->roles[0] == 'customer'){
 	// dont show this to end users
 	?>
@@ -138,6 +181,8 @@ $details_exists = $wpdb->get_var("SELECT COUNT(*) FROM advisor_details WHERE ID 
 $first_name = get_user_meta($GLOBALS['current_user']->ID, 'first_name', true);
 $last_name = get_user_meta($GLOBALS['current_user']->ID, 'last_name', true);
 $name = $first_name . " " . $last_name;
+
+get_header();
 
 ?>
 <form method="POST" enctype="multipart/form-data">
@@ -329,70 +374,76 @@ $name = $first_name . " " . $last_name;
 
 		<h3 class="gallery-label">
 			Photo Gallery
-			<button>
-				<i class="fa fa-pencil-square" aria-hidden="true"></i> Add
-			</button>
-			<button>
-				<i class="fa fa-minus-square" aria-hidden="true"></i> Delete
-			</button>
-		</h3>
-		<div class="agent-pgallery">
-			<div class="carousel" data-flickity='{ "wrapAround": true, "groupCells": true, "autoPlay": true }'>
-				<div class="carousel-cell"><img src="images/thumb1.jpg"></div>
-				<div class="carousel-cell"><img src="images/thumb2.jpg"></div>
-				<div class="carousel-cell"><img src="images/thumb1.jpg"></div>
-				<div class="carousel-cell"><img src="images/thumb2.jpg"></div>
-				<div class="carousel-cell"><img src="images/thumb1.jpg"></div>
-				<div class="carousel-cell"><img src="images/thumb2.jpg"></div>
-				<div class="carousel-cell"><img src="images/thumb1.jpg"></div>
-				<div class="carousel-cell"><img src="images/thumb2.jpg"></div>
-			</div>
+			<!-- <button> -->
+			<input type="file" multiple="multiple" name="photo_gallery[]" >
+			<!-- </button> -->
+			<!-- <button>
+			<i class="fa fa-minus-square" aria-hidden="true"></i> Delete
+		</button> -->
+	</h3>
+	<div class="agent-pgallery">
+		<div class="carousel" data-flickity='{ "wrapAround": true, "groupCells": true, "autoPlay": true }'>
+
+			<!-- PHOTO GALLERY  -->
+			<?php foreach($advisor_details_meta as $meta):
+				if($meta['meta_key'] == 'photo_gallery'):
+					?>
+					<div class="carousel-cell" id="photo_gallery-<?php echo $meta['meta_id']?>">
+						<center><a href="javascript:void(0);" onclick="ajaxDelete(<?php echo $meta['meta_id']?>)"><i class="fa fa-minus-square" aria-hidden="true"></i> Delete</a></center>
+						<img src="<?php echo $meta['meta_value']?>">
+					</div>
+					<?php
+				endif;
+			endforeach;?>
+			<!-- / PHOTO GALLERY  -->
+
 		</div>
+	</div>
 
-		<hr>
-
-
-		<h3 class="video-label">
-			Video Gallery
-			<button>
-				<i class="fa fa-pencil-square" aria-hidden="true"></i> Add
-			</button>
-			<button>
-				<i class="fa fa-minus-square" aria-hidden="true"></i> Delete
-			</button>
-		</h3>
-		<div class="agent-vgallery">
-			<div class="videocarousel" data-flickity='{ "wrapAround": true }'>
-
-				<div class="carousel-cell">
-					<div class="video-container">
-						<iframe width="560" height="315" src="https://www.youtube.com/embed/L6CKuz5a65I" frameborder="0" allowfullscreen></iframe>
-					</div>
-				</div>
-				<div class="carousel-cell">
-					<div class="video-container">
-						<iframe width="560" height="315" src="https://www.youtube.com/embed/ZNebSeFVPNc" frameborder="0" allowfullscreen></iframe>
-					</div>
-				</div>
-				<div class="carousel-cell">
-					<div class="video-container">
-						<iframe width="560" height="315" src="https://www.youtube.com/embed/vpYkz5WU1Vg" frameborder="0" allowfullscreen></iframe>
-					</div>
-				</div>
-
-			</div>
-		</div>
+	<hr>
 
 
-		<hr>
-
-		<h3>Rates per Consultation
-			<!--<button>
+	<h3 class="video-label">
+		Video Gallery
+		<button>
 			<i class="fa fa-pencil-square" aria-hidden="true"></i> Add
 		</button>
 		<button>
-		<i class="fa fa-plus-square" aria-hidden="true"></i> Edit
-	</button>-->
+			<i class="fa fa-minus-square" aria-hidden="true"></i> Delete
+		</button>
+	</h3>
+	<div class="agent-vgallery">
+		<div class="videocarousel" data-flickity='{ "wrapAround": true }'>
+
+			<div class="carousel-cell">
+				<div class="video-container">
+					<iframe width="560" height="315" src="https://www.youtube.com/embed/L6CKuz5a65I" frameborder="0" allowfullscreen></iframe>
+				</div>
+			</div>
+			<div class="carousel-cell">
+				<div class="video-container">
+					<iframe width="560" height="315" src="https://www.youtube.com/embed/ZNebSeFVPNc" frameborder="0" allowfullscreen></iframe>
+				</div>
+			</div>
+			<div class="carousel-cell">
+				<div class="video-container">
+					<iframe width="560" height="315" src="https://www.youtube.com/embed/vpYkz5WU1Vg" frameborder="0" allowfullscreen></iframe>
+				</div>
+			</div>
+
+		</div>
+	</div>
+
+
+	<hr>
+
+	<h3>Rates per Consultation
+		<!--<button>
+		<i class="fa fa-pencil-square" aria-hidden="true"></i> Add
+	</button>
+	<button>
+	<i class="fa fa-plus-square" aria-hidden="true"></i> Edit
+</button>-->
 </h3>
 <section class="agent-content">
 	<textarea name="rates"><?php if($advisor_details){ echo $advisor_details['rates']; } ?></textarea>
@@ -445,3 +496,23 @@ $name = $first_name . " " . $last_name;
 </form>
 
 <?php get_footer(); ?>
+
+<script>
+$(document).ready(function(){
+
+	ajaxDelete = function(meta_id){
+		$.ajax({
+			url:"<?php echo site_url(). "/wp-content/themes/listify/ajax/deletePhoto.php"?>",
+			type: "POST",
+			data: {'meta_id': meta_id},
+			success:function(data){
+				$("#photo_gallery-"+ meta_id).fadeOut(400, function(){
+					$("#photo_gallery-"+ meta_id).remove()
+				}
+			);
+		}
+	});
+}
+
+});
+</script>
