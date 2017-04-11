@@ -249,19 +249,19 @@ else:
 
             <ul class="social-links">
               <li class="fb">
-                <a href="#"><i class="fa fa-facebook" aria-hidden="true"></i>
+                <a href="<?php echo $advisor_details['social_fb'] ?>"><i class="fa fa-facebook" aria-hidden="true"></i>
                 </a>
               </li>
               <li class="gp">
-                <a href="#"><i class="fa fa-google-plus" aria-hidden="true"></i>
+                <a href="<?php echo $advisor_details['social_gplus'] ?>"><i class="fa fa-google-plus" aria-hidden="true"></i>
                 </a>
               </li>
               <li class="in">
-                <a href="#"><i class="fa fa-linkedin" aria-hidden="true"></i>
+                <a href="<?php echo $advisor_details['social_linkedin'] ?>"><i class="fa fa-linkedin" aria-hidden="true"></i>
                 </a>
               </li>
               <li class="sk">
-                <a href="#"><i class="fa fa-skype" aria-hidden="true"></i>
+                <a href="<?php echo $advisor_details['social_skype'] ?>"><i class="fa fa-skype" aria-hidden="true"></i>
                 </a>
               </li>
             </ul>

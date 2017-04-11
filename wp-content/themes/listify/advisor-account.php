@@ -91,6 +91,11 @@ if($_POST){
 	$detail_data['address'] = $_POST['address'];
 	$detail_data['contact'] = $_POST['contact'];
 	$detail_data['experience'] = $_POST['experience'];
+	/*social shits*/
+	$detail_data['social_fb'] = $_POST['social_fb'];
+	$detail_data['social_gplus'] = $_POST['social_gplus'];
+	$detail_data['social_linkedin'] = $_POST['social_linkedin'];
+	$detail_data['social_skype'] = $_POST['social_skype'];
 
 	$selected_license = "";
 
@@ -480,20 +485,24 @@ get_header();
 
 	<ul class="social-links">
 		<li class="fb">
-			<a href="#"><i class="fa fa-facebook" aria-hidden="true"></i>
+			<a href="javascript:void(0);"><i class="fa fa-facebook" aria-hidden="true"></i>
 			</a>
+			<input type="text" name="social_fb" placeholder="Facebook link" value="<?php echo $advisor_details['social_fb'] ?>">
 		</li>
 		<li class="gp">
-			<a href="#"><i class="fa fa-google-plus" aria-hidden="true"></i>
+			<a href="javascript:void(0);"><i class="fa fa-google-plus" aria-hidden="true"></i>
 			</a>
+			<input type="text" name="social_gplus" placeholder="Google+ link" value="<?php echo $advisor_details['social_gplus'] ?>">
 		</li>
 		<li class="in">
-			<a href="#"><i class="fa fa-linkedin" aria-hidden="true"></i>
+			<a href="javascript:void(0);"><i class="fa fa-linkedin" aria-hidden="true"></i>
 			</a>
+			<input type="text" name="social_linkedin" placeholder="LinkedIn link" value="<?php echo $advisor_details['social_linkedin'] ?>">
 		</li>
 		<li class="sk">
-			<a href="#"><i class="fa fa-skype" aria-hidden="true"></i>
+			<a href="javascript:void(0);"><i class="fa fa-skype" aria-hidden="true"></i>
 			</a>
+			<input type="text" name="social_skype" placeholder="Skype link" value="<?php echo $advisor_details['social_skype'] ?>">
 		</li>
 	</ul>
 
