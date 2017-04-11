@@ -48,12 +48,12 @@ else:
   * can be edited in profile
   * @var string
   */
-  $first_name = get_user_meta($GLOBALS['current_user']->ID, 'first_name', true);
-  $last_name = get_user_meta($GLOBALS['current_user']->ID, 'last_name', true);
+  $first_name = get_user_meta($_GET['a_id'], 'first_name', true);
+  $last_name = get_user_meta($_GET['a_id'], 'last_name', true);
   $name = $first_name . " " . $last_name;
 
   $advisor_details = $wpdb->get_row('SELECT * FROM advisor_details WHERE ID = '. $_GET['a_id'], ARRAY_A);
-  $advisor_details_meta = $wpdb->get_results('SELECT * FROM advisor_details_meta WHERE ID = '.$GLOBALS['current_user']->ID, ARRAY_A);
+  $advisor_details_meta = $wpdb->get_results('SELECT * FROM advisor_details_meta WHERE ID = '. $_GET['a_id'], ARRAY_A);
 
   $advisor_info = get_userdata($_GET['a_id'])->data;
   // var_dump($advisor_info);

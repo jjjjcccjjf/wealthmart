@@ -2,7 +2,7 @@
 /*
 Template Name: Advisor Account
 */
-
+get_header();
 /**
 * /classes folder are loaded inside the header
 * @var [type]
@@ -166,7 +166,9 @@ if($GLOBALS['current_user']->roles[0] == 'pending_vendor'){
 			</main>
 		</div>
 	</div>
-	<?php die();
+	<?php
+	get_footer();
+	die();
 }else{ # Same here show 404 template ?>
 	<div <?php echo apply_filters( 'listify_cover', 'page-cover' ); ?>>
 		<div class="cover-wrapper">
@@ -181,6 +183,7 @@ if($GLOBALS['current_user']->roles[0] == 'pending_vendor'){
 		</div>
 	</div>
 	<?php
+	get_footer();
 	die();
 }
 
@@ -194,7 +197,7 @@ $first_name = get_user_meta($GLOBALS['current_user']->ID, 'first_name', true);
 $last_name = get_user_meta($GLOBALS['current_user']->ID, 'last_name', true);
 $name = $first_name . " " . $last_name;
 
-get_header();
+
 
 ?>
 <form method="POST" enctype="multipart/form-data">
