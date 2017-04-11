@@ -204,23 +204,20 @@ else:
           </h3>
           <div class="agent-vgallery">
             <div class="videocarousel" data-flickity='{ "wrapAround": true }'>
-
-              <div class="carousel-cell">
-                <div class="video-container">
-                  <iframe width="560" height="315" src="https://www.youtube.com/embed/L6CKuz5a65I" frameborder="0" allowfullscreen></iframe>
-                </div>
-              </div>
-              <div class="carousel-cell">
-                <div class="video-container">
-                  <iframe width="560" height="315" src="https://www.youtube.com/embed/ZNebSeFVPNc" frameborder="0" allowfullscreen></iframe>
-                </div>
-              </div>
-              <div class="carousel-cell">
-                <div class="video-container">
-                  <iframe width="560" height="315" src="https://www.youtube.com/embed/vpYkz5WU1Vg" frameborder="0" allowfullscreen></iframe>
-                </div>
-              </div>
-
+              <!-- VIDEO GALLERY  -->
+              <?php foreach($advisor_details_meta as $meta):
+                if($meta['meta_key'] == 'video_gallery'):
+                  ?>
+                  <div class="carousel-cell" id="video_gallery-<?php echo $meta['meta_id']?>">
+                    <center><a href="javascript:void(0);" onclick="ajaxDeleteMeta(<?php echo $meta['meta_id']?>, 'video_gallery')"><i class="fa fa-minus-square" aria-hidden="true"></i> Delete</a></center>
+                    <div class="video-container">
+                      <iframe width="560" height="315" src="<?php echo $meta['meta_value']?>" frameborder="0" allowfullscreen></iframe>
+                    </div>
+                  </div>
+                  <?php
+                endif;
+              endforeach;?>
+              <!-- / VIDEO GALLERY  -->
             </div>
           </div>
 
