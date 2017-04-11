@@ -148,7 +148,7 @@ if($_POST){
 $blog_style = get_theme_mod( 'content-blog-style', 'default' );
 $style = 'grid-standard' == $blog_style ? 'standard' : 'cover';
 
-if($GLOBALS['current_user']->roles[0] == 'pending_vendor'){
+if($GLOBALS['current_user']->roles[0] == 'vendor'){
 	$advisor_details = $wpdb->get_row('SELECT * FROM advisor_details WHERE ID = '.$GLOBALS['current_user']->ID, ARRAY_A);
 	$advisor_details_meta = $wpdb->get_results('SELECT * FROM advisor_details_meta WHERE ID = '.$GLOBALS['current_user']->ID, ARRAY_A);
 }elseif($GLOBALS['current_user']->roles[0] == 'customer'){
