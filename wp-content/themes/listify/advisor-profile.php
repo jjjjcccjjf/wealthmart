@@ -20,13 +20,9 @@ if($GLOBALS['current_user']->ID > 0){
   $is_logged_in = false;
 }
 
-/**
-* check if $_GET['a_id'] (Advisor ID) exists in the DB
-* @var int
-*/
-$advisor_exists = $wpdb->get_var("SELECT COUNT(*) FROM advisor_details WHERE ID = ". $_GET['a_id'] ." AND is_approved = 1");
+$advisor_role = get_userdata($_GET['a_id'])->roles[0];
 
-if($advisor_exists != 1):
+if($advisor_role != 'vendor'): # Show 404 if not vendor
 
   ?>
   <div <?php echo apply_filters( 'listify_cover', 'page-cover' ); ?>>
@@ -56,7 +52,7 @@ else:
   $advisor_details_meta = $wpdb->get_results('SELECT * FROM advisor_details_meta WHERE ID = '. $_GET['a_id'], ARRAY_A);
 
   $advisor_info = get_userdata($_GET['a_id'])->data;
-  // var_dump($advisor_info);
+  // var_dump();
   // die();
   ?>
   <div class="container">
@@ -91,7 +87,7 @@ else:
           <img src="<?php echo $advisor_details['listing_photo']?>">
         </div>
         <div class="agent-details">
-          <h4><?php if($advisor_details){ echo $advisor_details['position']; } ?></h4>
+          <h4><?php if($advisor_details){ echo $advisor_details['title']; } ?></h4>
           <?php if($is_logged_in): ?>
             <ul>
               <li><i class="fa fa-map-marker" aria-hidden="true"></i>

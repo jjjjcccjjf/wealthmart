@@ -87,7 +87,7 @@ if($_POST){
 		$detail_data['listing_photo'] = $listing_photo_url;
 	}
 	$detail_data['ID'] = $GLOBALS['current_user']->ID;
-	$detail_data['position'] = $_POST['position'];
+	$detail_data['title'] = $_POST['title'];
 	$detail_data['address'] = $_POST['address'];
 	$detail_data['contact'] = $_POST['contact'];
 	$detail_data['experience'] = $_POST['experience'];
@@ -148,7 +148,7 @@ if($_POST){
 $blog_style = get_theme_mod( 'content-blog-style', 'default' );
 $style = 'grid-standard' == $blog_style ? 'standard' : 'cover';
 
-if($GLOBALS['current_user']->roles[0] == 'vendor'){
+if($GLOBALS['current_user']->roles[0] == 'vendor' || $GLOBALS['current_user']->roles[0] == 'pending_vendor'){
 	$advisor_details = $wpdb->get_row('SELECT * FROM advisor_details WHERE ID = '.$GLOBALS['current_user']->ID, ARRAY_A);
 	$advisor_details_meta = $wpdb->get_results('SELECT * FROM advisor_details_meta WHERE ID = '.$GLOBALS['current_user']->ID, ARRAY_A);
 }elseif($GLOBALS['current_user']->roles[0] == 'customer'){
@@ -238,7 +238,7 @@ $name = $first_name . " " . $last_name;
 					<div class="agent-details">
 						<ul style="margin-top:80px;">
 							<li><i class="fa fa-user" aria-hidden="true"></i>
-								<input type="text" name="position" placeholder="Position" <?php if($advisor_details){ ?>value="<?php echo $advisor_details['position']; ?>"<?php } ?>>
+								<input type="text" name="title" placeholder="Title" <?php if($advisor_details){ ?>value="<?php echo $advisor_details['title']; ?>"<?php } ?>>
 							</li>
 							<li><i class="fa fa-map-marker" aria-hidden="true"></i>
 								<input type="text" placeholder="Address" name="address" <?php if($advisor_details){ ?>value="<?php echo $advisor_details['address']; ?>"<?php } ?> >
