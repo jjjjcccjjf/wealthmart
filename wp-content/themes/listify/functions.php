@@ -224,7 +224,7 @@ function listify_scripts() {
         'is_job_manager_archive' => listify_is_job_manager_archive(),
 		'is_rtl' => is_rtl(),
         'megamenu' => array(
-            'taxonomy' => listify_theme_mod( 'nav-megamenu', 'job_listing_category' ) 
+            'taxonomy' => listify_theme_mod( 'nav-megamenu', 'job_listing_category' )
         ),
         'l10n' => array(
             'closed' => __( 'Closed', 'listify' ),
@@ -238,6 +238,24 @@ function listify_scripts() {
     ) ) );
 }
 add_action( 'wp_enqueue_scripts', 'listify_scripts' );
+
+/**
+ * email user whenever role changed!
+ * @author: @jjjjcccjjf
+ * @link http://wpsnipp.com/index.php/functions-php/send-email-notification-when-user-role-changes/
+ */
+add_action( 'set_user_role', function( $user_id, $role, $old_role )
+{
+  // if ($new_role == 'vendor') {
+      $site_url = get_bloginfo('wpurl');
+      $user_info = get_userdata( $user_id );
+      $to = $user_info->user_email;
+      $subject = "Role changed: ".$site_url."";
+      $message = "Hello " .$user_info->display_name . " your role has changed on ".$site_url.", congratulations you are now a " . $role;
+      wp_mail($to, $subject, $message);
+  // }
+
+}, 10, 3 );
 
 /**
  * Adds custom classes to the array of body classes.
@@ -255,7 +273,7 @@ function listify_body_classes( $classes ) {
 
     if (
         is_page_template( 'page-templates/template-full-width-blank.php' ) ||
-        ( isset( $post ) && has_shortcode( get_post()->post_content, 'jobs' ) ) 
+        ( isset( $post ) && has_shortcode( get_post()->post_content, 'jobs' ) )
     ) {
         $classes[] = 'unboxed';
     }
@@ -264,7 +282,7 @@ function listify_body_classes( $classes ) {
         $classes[] = 'tertiary-enabled';
     }
 
-	if ( 
+	if (
 		get_theme_mod( 'fixed-header', true ) ||
 		( is_front_page() && 'transparent' != get_theme_mod( 'home-header-style', 'default' ) && get_theme_mod( 'fixed-header', true ) )
 	) {
