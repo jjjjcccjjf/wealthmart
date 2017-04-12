@@ -253,6 +253,8 @@ add_action( 'set_user_role', function( $user_id, $role, $old_role )
       $subject = "Role changed: ".$site_url."";
       $message = "Hello " .$user_info->display_name . " your role has changed on ".$site_url.", congratulations you are now a " . $role;
       wp_mail($to, $subject, $message);
+
+      #TODO: Include listing page link
   // }
 
 }, 10, 3 );

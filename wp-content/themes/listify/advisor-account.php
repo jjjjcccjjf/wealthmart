@@ -509,8 +509,62 @@ $name = $first_name . " " . $last_name;
 		</li>
 	</ul>
 
-	<input type="submit" value="Save Changes">
-</article>
+	<section class="agent-review">
+		<h3>1 Review(s)</h3>
+		<div class="review-box">
+			<aside class="overall-rating">
+				<p>Average Rating</p>
+				<h1>3.0</h1>
+				<fieldset class="rating2">
+					<input type="radio" id="star5" name="rating" value="5" /><label class = "full" for="star5" title="Awesome - 5 stars"></label>
+					<input type="radio" id="star4half" name="rating" value="4 and a half" /><label class="half" for="star4half" title="Pretty good - 4.5 stars"></label>
+					<input type="radio" id="star4" name="rating" value="4" /><label class = "full" for="star4" title="Pretty good - 4 stars"></label>
+					<input type="radio" id="star3half" name="rating" value="3 and a half" /><label class="half" for="star3half" title="Meh - 3.5 stars"></label>
+					<input type="radio" id="star3" name="rating" value="3" /><label class = "full" for="star3" title="Meh - 3 stars"></label>
+					<input type="radio" id="star2half" name="rating" value="2 and a half" /><label class="half" for="star2half" title="Kinda bad - 2.5 stars"></label>
+					<input type="radio" id="star2" name="rating" value="2" /><label class = "full" for="star2" title="Kinda bad - 2 stars"></label>
+					<input type="radio" id="star1half" name="rating" value="1 and a half" /><label class="half" for="star1half" title="Meh - 1.5 stars"></label>
+					<input type="radio" id="star1" name="rating" value="1" /><label class = "full" for="star1" title="Sucks big time - 1 star"></label>
+					<input type="radio" id="starhalf" name="rating" value="half" /><label class="half" for="starhalf" title="Sucks big time - 0.5 stars"></label>
+				</aside>
+				<div class="ratings-summary">
+					<ul>
+						<li><label>1 Star</label>
+							<div class="ratingbar">
+								<div style="width: 0%; background: #48c062;"></div>
+							</div>
+							<div class="ratingnum">0%</div>
+						</li>
+						<li><label>2 Star</label>
+							<div class="ratingbar">
+								<div style="width: 0%; background: #48c062; height: 10px"></div>
+							</div>
+							<div class="ratingnum">0%</div>
+						</li>
+						<li><label>3 Star</label>
+							<div class="ratingbar">
+								<div style="width: 60%; background: #48c062; height: 10px"></div>
+							</div>
+							<div class="ratingnum">60%</div>
+						</li>
+						<li><label>4 Star</label>
+							<div class="ratingbar">
+								<div style="width: 0%; background: #48c062"></div>
+							</div>
+							<div class="ratingnum">0%</div>
+						</li>
+						<li><label>5 Star</label>
+							<div class="ratingbar">
+								<div style="width: 0%; background: #48c062"></div>
+							</div>
+							<div class="ratingnum">0%</div>
+						</li>
+					</ul>
+				</div>
+			</div>
+		</section>
+		<input type="submit" value="Save Changes" style="margin-top: 20px;">
+	</article>
 
 
 </section>
