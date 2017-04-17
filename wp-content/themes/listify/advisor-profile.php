@@ -20,12 +20,12 @@ if(isset($_POST['testimonial'])){
   $data['testimonial'] = $_POST['testimonial'];
   $wpdb->insert('advisor_reviews', $data);
   // Print last SQL query string
-  echo $wpdb->last_query;
+  // echo $wpdb->last_query;
   // Print last SQL query result
-  echo $wpdb->last_result;
+  // echo $wpdb->last_result;
   // Print last SQL query Error
-  echo $wpdb->last_error;
-  die();
+  // echo $wpdb->last_error;
+  // die();
   header('Location: ' . site_url('advisor-account?a_id=' . $GLOBALS['current_user']->ID));
 }
 
@@ -66,9 +66,11 @@ else:
 
   $advisor_details = $wpdb->get_row('SELECT * FROM advisor_details WHERE ID = '. $_GET['a_id'], ARRAY_A);
   $advisor_details_meta = $wpdb->get_results('SELECT * FROM advisor_details_meta WHERE ID = '. $_GET['a_id'], ARRAY_A);
+  $advisor_reviews = $wpdb->get_results('SELECT * FROM advisor_reviews WHERE advisor_id = '. $_GET['a_id'], ARRAY_A);
 
-  $advisor_info = get_userdata($_GET['a_id'])->data;
-  // var_dump();
+  // die(var_dump($advisor_reviews));
+  $advisor_info = get_user_meta($_GET['a_id']);
+  // var_dump($advisor_info);
   // die();
   ?>
   <div class="container">
@@ -333,52 +335,39 @@ else:
               </div>
 
               <article class="ratings-list">
-                <div class="customer-rating">
-                  <div class="customer-pic"><img src="images/customerpic.jpg"></div>
-                  <div class="customer-review">
-                    <h5>Angelo Juan
-                      <span class="fright">
-                        <fieldset class="rating">
-                          <input type="radio"  value="5" /><label class = "full" for="star5" title="Awesome - 5 stars"></label>
-                          <input type="radio"  value="4 and a half" /><label class="half" for="star4half" title="Pretty good - 4.5 stars"></label>
-                          <input type="radio"  value="4" /><label class = "full" for="star4" title="Pretty good - 4 stars"></label>
-                          <input type="radio"  value="3 and a half" /><label class="half" for="star3half" title="Meh - 3.5 stars"></label>
-                          <input type="radio"  value="3" /><label class = "full" for="star3" title="Meh - 3 stars"></label>
-                          <input type="radio"  value="2 and a half" /><label class="half" for="star2half" title="Kinda bad - 2.5 stars"></label>
-                          <input type="radio"  value="2" /><label class = "full" for="star2" title="Kinda bad - 2 stars"></label>
-                          <input type="radio"  value="1 and a half" /><label class="half" for="star1half" title="Meh - 1.5 stars"></label>
-                          <input type="radio"  value="1" /><label class = "full" for="star1" title="Sucks big time - 1 star"></label>
-                          <input type="radio"  value="half" /><label class="half" for="starhalf" title="Sucks big time - 0.5 stars"></label>
-                        </fieldset>
-                      </span>
-                    </h5>
-                    <p>Review in text</p>
-                  </div>
-                </div>
 
-                <div class="customer-rating">
-                  <div class="customer-pic"><img src="images/customerpic.jpg"></div>
-                  <div class="customer-review">
-                    <h5>Angelo Juan
-                      <span class="fright">
-                        <fieldset class="rating">
-                          <input type="radio"  value="5" /><label class = "full" for="star5" title="Awesome - 5 stars"></label>
-                          <input type="radio"  value="4 and a half" /><label class="half" for="star4half" title="Pretty good - 4.5 stars"></label>
-                          <input type="radio"  value="4" /><label class = "full" for="star4" title="Pretty good - 4 stars"></label>
-                          <input type="radio"  value="3 and a half" /><label class="half" for="star3half" title="Meh - 3.5 stars"></label>
-                          <input type="radio"  value="3" /><label class = "full" for="star3" title="Meh - 3 stars"></label>
-                          <input type="radio"  value="2 and a half" /><label class="half" for="star2half" title="Kinda bad - 2.5 stars"></label>
-                          <input type="radio"  value="2" /><label class = "full" for="star2" title="Kinda bad - 2 stars"></label>
-                          <input type="radio"  value="1 and a half" /><label class="half" for="star1half" title="Meh - 1.5 stars"></label>
-                          <input type="radio"  value="1" /><label class = "full" for="star1" title="Sucks big time - 1 star"></label>
-                          <input type="radio"  value="half" /><label class="half" for="starhalf" title="Sucks big time - 0.5 stars"></label>
-                        </fieldset>
-                      </span>
-                    </h5>
-                    <p>Review in text</p>
-                  </div>
-                </div>
-              </article>
+
+
+                <!-- REVIEW COMMENTS  -->
+                <?php foreach($advisor_reviews as $row):
+                    ?>
+                    <div class="customer-rating">
+                      <div class="customer-pic"><img src="<?php echo get_avatar_url($row['reviewer_id'])?>"></div>
+                      <div class="customer-review">
+                        <h5>
+                          <?php echo get_user_meta($row['reviewer_id'], 'first_name', true)
+                          . ' ' . get_user_meta($row['reviewer_id'], 'last_name', true)?>
+                          <span class="fright">
+                            <fieldset class="rating">
+                              <input type="radio"  value="5" <?php echo ($row['rating'] == 5.0) ? 'checked' : '';?>/><label class = "full" for="star5" title="Awesome - 5 stars"></label>
+                              <input type="radio"  value="4 and a half" <?php echo ($row['rating'] == 4.5) ? 'checked' : '';?>/><label class="half" for="star4half" title="Pretty good - 4.5 stars"></label>
+                              <input type="radio"  value="4" <?php echo ($row['rating'] == 4.0) ? 'checked' : '';?>/><label class = "full" for="star4" title="Pretty good - 4 stars"></label>
+                              <input type="radio"  value="3 and a half" <?php echo ($row['rating'] == 3.5) ? 'checked' : '';?>/><label class="half" for="star3half" title="Meh - 3.5 stars"></label>
+                              <input type="radio"  value="3" <?php echo ($row['rating'] == 3.0) ? 'checked' : '';?>/><label class = "full" for="star3" title="Meh - 3 stars"></label>
+                              <input type="radio"  value="2 and a half" <?php echo ($row['rating'] == 2.5 ) ? 'checked' : '';?>/><label class="half" for="star2half" title="Kinda bad - 2.5 stars"></label>
+                              <input type="radio"  value="2" <?php echo ($row['rating'] == 2.0 ) ? 'checked' : '';?>/><label class = "full" for="star2" title="Kinda bad - 2 stars"></label>
+                              <input type="radio"  value="1 and a half" <?php echo ($row['rating'] == 1.5) ? 'checked' : '';?>/><label class="half" for="star1half" title="Meh - 1.5 stars"></label>
+                              <input type="radio"  value="1" <?php echo ($row['rating'] == 1.0) ? 'checked' : '';?>/><label class = "full" for="star1" title="Sucks big time - 1 star"></label>
+                              <input type="radio"  value="half" <?php echo ($row['rating'] == 0.5) ? 'checked' : '';?>/><label class="half" for="starhalf" title="Sucks big time - 0.5 stars"></label>
+                            </fieldset>
+                          </span>
+                        </h5>
+                        <p><?php echo $row['testimonial'] ?></p>
+                      </div>
+                    </div>
+                    <?php
+                endforeach;?>
+                <!-- / REVIEW COMMENTS  -->
 
               <form method="post">
                 <h3>Leave Your Review
