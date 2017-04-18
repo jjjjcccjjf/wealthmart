@@ -151,6 +151,7 @@ $style = 'grid-standard' == $blog_style ? 'standard' : 'cover';
 if($GLOBALS['current_user']->roles[0] == 'vendor' || $GLOBALS['current_user']->roles[0] == 'pending_vendor'){
 	$advisor_details = $wpdb->get_row('SELECT * FROM advisor_details WHERE ID = '.$GLOBALS['current_user']->ID, ARRAY_A);
 	$advisor_details_meta = $wpdb->get_results('SELECT * FROM advisor_details_meta WHERE ID = '.$GLOBALS['current_user']->ID, ARRAY_A);
+	$advisor_reviews = $wpdb->get_results('SELECT * FROM advisor_reviews WHERE advisor_id = '. $GLOBALS['current_user']->ID, ARRAY_A);
 }elseif($GLOBALS['current_user']->roles[0] == 'customer'){
 	// dont show this to end users
 	?>
@@ -211,20 +212,27 @@ $name = $first_name . " " . $last_name;
 				</h1>
 				<h4><?php echo $advisor_details['address'] ?></h4>
 				<p><?php if($advisor_details){ echo str_replace(',', ', ', $advisor_details['expertise']); } ?></p>
-				<fieldset class="rating">
-					<input type="radio" id="star5" name="rating" value="5" /><label class = "full" for="star5" title="Awesome - 5 stars"></label>
-					<input type="radio" id="star4half" name="rating" value="4 and a half" /><label class="half" for="star4half" title="Pretty good - 4.5 stars"></label>
-					<input type="radio" id="star4" name="rating" value="4" /><label class = "full" for="star4" title="Pretty good - 4 stars"></label>
-					<input type="radio" id="star3half" name="rating" value="3 and a half" /><label class="half" for="star3half" title="Meh - 3.5 stars"></label>
-					<input type="radio" id="star3" name="rating" value="3" /><label class = "full" for="star3" title="Meh - 3 stars"></label>
-					<input type="radio" id="star2half" name="rating" value="2 and a half" /><label class="half" for="star2half" title="Kinda bad - 2.5 stars"></label>
-					<input type="radio" id="star2" name="rating" value="2" /><label class = "full" for="star2" title="Kinda bad - 2 stars"></label>
-					<input type="radio" id="star1half" name="rating" value="1 and a half" /><label class="half" for="star1half" title="Meh - 1.5 stars"></label>
-					<input type="radio" id="star1" name="rating" value="1" /><label class = "full" for="star1" title="Sucks big time - 1 star"></label>
-					<input type="radio" id="starhalf" name="rating" value="half" /><label class="half" for="starhalf" title="Sucks big time - 0.5 stars"></label>
-
+				<?php
+				$rating_count = count($advisor_reviews);
+				$all_ratings = array_column($advisor_reviews, 'rating');
+				/**
+				* get the average of all ratings
+				*/
+				$avg_rating = number_format(array_sum($all_ratings) / $rating_count, 1);
+				?>
+				<fieldset class="rating2">
+					<input type="radio"  value="5" <?php echo ($avg_rating <= 5.0 && $avg_rating > 4.5) ? 'checked' : '';?>/><label class = "full" for="star5" title="Awesome - 5 stars"></label>
+					<input type="radio"  value="4 and a half" <?php echo ($avg_rating <= 4.5 && $avg_rating > 4.0) ? 'checked' : '';?>/><label class="half" for="star4half" title="Pretty good - 4.5 stars"></label>
+					<input type="radio"  value="4" <?php echo ($avg_rating <= 4.0 && $avg_rating > 3.5) ? 'checked' : '';?>/><label class = "full" for="star4" title="Pretty good - 4 stars"></label>
+					<input type="radio"  value="3 and a half" <?php echo ($avg_rating <= 3.5 && $avg_rating > 3.0) ? 'checked' : '';?>/><label class="half" for="star3half" title="Meh - 3.5 stars"></label>
+					<input type="radio"  value="3" <?php echo ($avg_rating <= 3.0 && $avg_rating > 2.5) ? 'checked' : '';?>/><label class = "full" for="star3" title="Meh - 3 stars"></label>
+					<input type="radio"  value="2 and a half" <?php echo ($avg_rating <= 2.5 && $avg_rating > 2.0 ) ? 'checked' : '';?>/><label class="half" for="star2half" title="Kinda bad - 2.5 stars"></label>
+					<input type="radio"  value="2" <?php echo ($avg_rating <= 2.0 && $avg_rating > 1.5 ) ? 'checked' : '';?>/><label class = "full" for="star2" title="Kinda bad - 2 stars"></label>
+					<input type="radio"  value="1 and a half" <?php echo ($avg_rating <= 1.5 && $avg_rating > 1.0 ) ? 'checked' : '';?>/><label class="half" for="star1half" title="Meh - 1.5 stars"></label>
+					<input type="radio"  value="1" <?php echo ($avg_rating <= 1.0 && $avg_rating > 0.5) ? 'checked' : '';?>/><label class = "full" for="star1" title="Sucks big time - 1 star"></label>
+					<input type="radio"  value="half" <?php echo ($avg_rating <= 0.5) ? 'checked' : '';?>/><label class="half" for="starhalf" title="Sucks big time - 0.5 stars"></label>
 				</fieldset>
-				<span>1 Review(s)</span>
+				<span><?php echo $rating_count?> Review(s)</span>
 			</aside>
 		</section>
 		<section class="listing-details">
@@ -510,58 +518,99 @@ $name = $first_name . " " . $last_name;
 	</ul>
 
 	<section class="agent-review">
-		<h3>1 Review(s)</h3>
+		<h3><?php echo $rating_count ?> Review(s)</h3>
 		<div class="review-box">
 			<aside class="overall-rating">
 				<p>Average Rating</p>
-				<h1>3.0</h1>
+				<h1><?php echo $avg_rating; ?></h1>
 				<fieldset class="rating2">
-					<input type="radio" id="star5" name="rating" value="5" /><label class = "full" for="star5" title="Awesome - 5 stars"></label>
-					<input type="radio" id="star4half" name="rating" value="4 and a half" /><label class="half" for="star4half" title="Pretty good - 4.5 stars"></label>
-					<input type="radio" id="star4" name="rating" value="4" /><label class = "full" for="star4" title="Pretty good - 4 stars"></label>
-					<input type="radio" id="star3half" name="rating" value="3 and a half" /><label class="half" for="star3half" title="Meh - 3.5 stars"></label>
-					<input type="radio" id="star3" name="rating" value="3" /><label class = "full" for="star3" title="Meh - 3 stars"></label>
-					<input type="radio" id="star2half" name="rating" value="2 and a half" /><label class="half" for="star2half" title="Kinda bad - 2.5 stars"></label>
-					<input type="radio" id="star2" name="rating" value="2" /><label class = "full" for="star2" title="Kinda bad - 2 stars"></label>
-					<input type="radio" id="star1half" name="rating" value="1 and a half" /><label class="half" for="star1half" title="Meh - 1.5 stars"></label>
-					<input type="radio" id="star1" name="rating" value="1" /><label class = "full" for="star1" title="Sucks big time - 1 star"></label>
-					<input type="radio" id="starhalf" name="rating" value="half" /><label class="half" for="starhalf" title="Sucks big time - 0.5 stars"></label>
+					<input type="radio"  value="5" <?php echo ($avg_rating <= 5.0 && $avg_rating > 4.5) ? 'checked' : '';?>/><label class = "full" for="star5" title="Awesome - 5 stars"></label>
+					<input type="radio"  value="4 and a half" <?php echo ($avg_rating <= 4.5 && $avg_rating > 4.0) ? 'checked' : '';?>/><label class="half" for="star4half" title="Pretty good - 4.5 stars"></label>
+					<input type="radio"  value="4" <?php echo ($avg_rating <= 4.0 && $avg_rating > 3.5) ? 'checked' : '';?>/><label class = "full" for="star4" title="Pretty good - 4 stars"></label>
+					<input type="radio"  value="3 and a half" <?php echo ($avg_rating <= 3.5 && $avg_rating > 3.0) ? 'checked' : '';?>/><label class="half" for="star3half" title="Meh - 3.5 stars"></label>
+					<input type="radio"  value="3" <?php echo ($avg_rating <= 3.0 && $avg_rating > 2.5) ? 'checked' : '';?>/><label class = "full" for="star3" title="Meh - 3 stars"></label>
+					<input type="radio"  value="2 and a half" <?php echo ($avg_rating <= 2.5 && $avg_rating > 2.0 ) ? 'checked' : '';?>/><label class="half" for="star2half" title="Kinda bad - 2.5 stars"></label>
+					<input type="radio"  value="2" <?php echo ($avg_rating <= 2.0 && $avg_rating > 1.5 ) ? 'checked' : '';?>/><label class = "full" for="star2" title="Kinda bad - 2 stars"></label>
+					<input type="radio"  value="1 and a half" <?php echo ($avg_rating <= 1.5 && $avg_rating > 1.0 ) ? 'checked' : '';?>/><label class="half" for="star1half" title="Meh - 1.5 stars"></label>
+					<input type="radio"  value="1" <?php echo ($avg_rating <= 1.0 && $avg_rating > 0.5) ? 'checked' : '';?>/><label class = "full" for="star1" title="Sucks big time - 1 star"></label>
+					<input type="radio"  value="half" <?php echo ($avg_rating <= 0.5) ? 'checked' : '';?>/><label class="half" for="starhalf" title="Sucks big time - 0.5 stars"></label>
+				</fieldset>
 				</aside>
 				<div class="ratings-summary">
+
+					<?php
+					$unique_ratings = array_unique(array_column($advisor_reviews, 'rating'));
+					$u_rating_count = array(
+						'5.00' => 0,
+						'4.50' => 0,
+						'4.00' => 0,
+						'3.50' => 0,
+						'3.00' => 0,
+						'2.50' => 0,
+						'2.00' => 0,
+						'1.50' => 0,
+						'1.00' => 0,
+						'0.50' => 0,
+					);
+
+					foreach($u_rating_count as $key => $val){
+						$u_rating_count[$key] = count(array_keys($all_ratings, $key));
+					}
+
+					?>
 					<ul>
 						<li><label>1 Star</label>
 							<div class="ratingbar">
-								<div style="width: 0%; background: #48c062;"></div>
+								<div style="width: <?php
+								echo $ratingbar1 = round((($u_rating_count['0.50'] + $u_rating_count['1.00']) / $rating_count) * 100);
+								?>%; background: #48c062;  height: 10px"></div>
 							</div>
-							<div class="ratingnum">0%</div>
+							<div class="ratingnum">
+								<?php echo $ratingbar1 ?>%
+							</div>
 						</li>
 						<li><label>2 Star</label>
 							<div class="ratingbar">
-								<div style="width: 0%; background: #48c062; height: 10px"></div>
+								<div style="width: <?php
+								echo $ratingbar2 = round((($u_rating_count['1.50'] + $u_rating_count['2.00']) / $rating_count) * 100);
+								?>%; background: #48c062; height: 10px"></div>
 							</div>
-							<div class="ratingnum">0%</div>
+							<div class="ratingnum">
+								<?php echo $ratingbar2 ?>%
+							</div>
 						</li>
 						<li><label>3 Star</label>
 							<div class="ratingbar">
-								<div style="width: 60%; background: #48c062; height: 10px"></div>
+								<div style="width: <?php
+								echo $ratingbar3 = round((($u_rating_count['2.50'] + $u_rating_count['3.00']) / $rating_count) * 100);
+								?>%; background: #48c062; height: 10px"></div>
 							</div>
-							<div class="ratingnum">60%</div>
+							<div class="ratingnum">
+								<?php echo $ratingbar3 ?>%
+							</div>
 						</li>
 						<li><label>4 Star</label>
 							<div class="ratingbar">
-								<div style="width: 0%; background: #48c062"></div>
+								<div style="width: <?php
+								echo $ratingbar4 = round((($u_rating_count['3.50'] + $u_rating_count['4.00']) / $rating_count) * 100);
+								?>%; background: #48c062; height: 10px"></div>
 							</div>
-							<div class="ratingnum">0%</div>
-						</li>
-						<li><label>5 Star</label>
-							<div class="ratingbar">
-								<div style="width: 0%; background: #48c062"></div>
-							</div>
-							<div class="ratingnum">0%</div>
-						</li>
-					</ul>
+							<div class="ratingnum">
+								<?php echo $ratingbar4 ?>%</div>
+							</li>
+							<li><label>5 Star</label>
+								<div class="ratingbar">
+									<div style="width: <?php
+									echo $ratingbar5 = round((($u_rating_count['4.50'] + $u_rating_count['5.00']) / $rating_count) * 100);
+									?>%; background: #48c062; height: 10px"></div>
+								</div>
+								<div class="ratingnum">
+									<?php echo $ratingbar5 ?>%
+								</div>
+							</li>
+						</ul>
+					</div>
 				</div>
-			</div>
 		</section>
 		<input type="submit" value="Save Changes" style="margin-top: 20px;">
 	</article>
