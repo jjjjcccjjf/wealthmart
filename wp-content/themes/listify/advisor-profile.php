@@ -68,7 +68,7 @@ else:
   $advisor_details_meta = $wpdb->get_results('SELECT * FROM advisor_details_meta WHERE ID = '. $_GET['a_id'], ARRAY_A);
   $advisor_reviews = $wpdb->get_results('SELECT * FROM advisor_reviews WHERE advisor_id = '. $_GET['a_id'], ARRAY_A);
 
-  // die(var_dump($advisor_reviews));
+  // die(var_dump(array_unique(array_column($advisor_reviews, 'rating'))));
   $advisor_info = get_user_meta($_GET['a_id']);
   // var_dump($advisor_info);
   // die();
@@ -285,7 +285,12 @@ else:
             <div class="review-box">
               <aside class="overall-rating">
                 <p>Average Rating</p>
-                <h1><?php echo $avg_rating = number_format(array_sum(array_column($advisor_reviews, 'rating')) / $rating_count, 1) ?></h1>
+                <h1><?php
+                $all_ratings = array_column($advisor_reviews, 'rating');
+                /**
+                * get the average of all ratings
+                */
+                echo $avg_rating = number_format(array_sum($all_ratings) / $rating_count, 1) ?></h1>
                 <fieldset class="rating2">
                   <input type="radio"  value="5" <?php echo ($avg_rating <= 5.0 && $avg_rating > 4.5) ? 'checked' : '';?>/><label class = "full" for="star5" title="Awesome - 5 stars"></label>
                   <input type="radio"  value="4 and a half" <?php echo ($avg_rating <= 4.5 && $avg_rating > 4.0) ? 'checked' : '';?>/><label class="half" for="star4half" title="Pretty good - 4.5 stars"></label>
@@ -299,128 +304,168 @@ else:
                   <input type="radio"  value="half" <?php echo ($avg_rating <= 0.5) ? 'checked' : '';?>/><label class="half" for="starhalf" title="Sucks big time - 0.5 stars"></label>
                 </aside>
                 <div class="ratings-summary">
+
+                  <?php
+                  $unique_ratings = array_unique(array_column($advisor_reviews, 'rating'));
+                  $u_rating_count = array(
+                    '5.00' => 0,
+                    '4.50' => 0,
+                    '4.00' => 0,
+                    '3.50' => 0,
+                    '3.00' => 0,
+                    '2.50' => 0,
+                    '2.00' => 0,
+                    '1.50' => 0,
+                    '1.00' => 0,
+                    '0.50' => 0,
+                  );
+
+                  foreach($u_rating_count as $key => $val){
+                    $u_rating_count[$key] = count(array_keys($all_ratings, $key));
+                  }
+
+                  ?>
                   <ul>
                     <li><label>1 Star</label>
                       <div class="ratingbar">
-                        <div style="width: 0%; background: #48c062;"></div>
+                        <div style="width: <?php
+                        echo $ratingbar1 = round((($u_rating_count['0.50'] + $u_rating_count['1.00']) / $rating_count) * 100);
+                        ?>%; background: #48c062;  height: 10px"></div>
                       </div>
-                      <div class="ratingnum">0%</div>
+                      <div class="ratingnum">
+                        <?php echo $ratingbar1 ?>%
+                      </div>
                     </li>
                     <li><label>2 Star</label>
                       <div class="ratingbar">
-                        <div style="width: 0%; background: #48c062; height: 10px"></div>
+                        <div style="width: <?php
+                        echo $ratingbar2 = round((($u_rating_count['1.50'] + $u_rating_count['2.00']) / $rating_count) * 100);
+                        ?>%; background: #48c062; height: 10px"></div>
                       </div>
-                      <div class="ratingnum">0%</div>
+                      <div class="ratingnum">
+                        <?php echo $ratingbar2 ?>%
+                      </div>
                     </li>
                     <li><label>3 Star</label>
                       <div class="ratingbar">
-                        <div style="width: 60%; background: #48c062; height: 10px"></div>
+                        <div style="width: <?php
+                        echo $ratingbar3 = round((($u_rating_count['2.50'] + $u_rating_count['3.00']) / $rating_count) * 100);
+                        ?>%; background: #48c062; height: 10px"></div>
                       </div>
-                      <div class="ratingnum">60%</div>
+                      <div class="ratingnum">
+                        <?php echo $ratingbar3 ?>%
+                      </div>
                     </li>
                     <li><label>4 Star</label>
                       <div class="ratingbar">
-                        <div style="width: 0%; background: #48c062"></div>
+                        <div style="width: <?php
+                        echo $ratingbar4 = round((($u_rating_count['3.50'] + $u_rating_count['4.00']) / $rating_count) * 100);
+                        ?>%; background: #48c062; height: 10px"></div>
                       </div>
-                      <div class="ratingnum">0%</div>
-                    </li>
-                    <li><label>5 Star</label>
-                      <div class="ratingbar">
-                        <div style="width: 0%; background: #48c062"></div>
-                      </div>
-                      <div class="ratingnum">0%</div>
-                    </li>
-                  </ul>
-                </div>
-              </div>
-
-              <article class="ratings-list">
-
-                <!-- REVIEW COMMENTS  -->
-                <?php foreach($advisor_reviews as $row):
-                  ?>
-                  <div class="customer-rating">
-                    <div class="customer-pic"><img src="<?php echo get_avatar_url($row['reviewer_id'])?>"></div>
-                    <div class="customer-review">
-                      <h5>
-                        <?php echo get_user_meta($row['reviewer_id'], 'first_name', true)
-                        . ' ' . get_user_meta($row['reviewer_id'], 'last_name', true)?>
-                        <span class="fright">
-                          <fieldset class="rating">
-                            <input type="radio"  value="5" <?php echo ($row['rating'] == 5.0) ? 'checked' : '';?>/><label class = "full" for="star5" title="Awesome - 5 stars"></label>
-                            <input type="radio"  value="4 and a half" <?php echo ($row['rating'] == 4.5) ? 'checked' : '';?>/><label class="half" for="star4half" title="Pretty good - 4.5 stars"></label>
-                            <input type="radio"  value="4" <?php echo ($row['rating'] == 4.0) ? 'checked' : '';?>/><label class = "full" for="star4" title="Pretty good - 4 stars"></label>
-                            <input type="radio"  value="3 and a half" <?php echo ($row['rating'] == 3.5) ? 'checked' : '';?>/><label class="half" for="star3half" title="Meh - 3.5 stars"></label>
-                            <input type="radio"  value="3" <?php echo ($row['rating'] == 3.0) ? 'checked' : '';?>/><label class = "full" for="star3" title="Meh - 3 stars"></label>
-                            <input type="radio"  value="2 and a half" <?php echo ($row['rating'] == 2.5 ) ? 'checked' : '';?>/><label class="half" for="star2half" title="Kinda bad - 2.5 stars"></label>
-                            <input type="radio"  value="2" <?php echo ($row['rating'] == 2.0 ) ? 'checked' : '';?>/><label class = "full" for="star2" title="Kinda bad - 2 stars"></label>
-                            <input type="radio"  value="1 and a half" <?php echo ($row['rating'] == 1.5) ? 'checked' : '';?>/><label class="half" for="star1half" title="Meh - 1.5 stars"></label>
-                            <input type="radio"  value="1" <?php echo ($row['rating'] == 1.0) ? 'checked' : '';?>/><label class = "full" for="star1" title="Sucks big time - 1 star"></label>
-                            <input type="radio"  value="half" <?php echo ($row['rating'] == 0.5) ? 'checked' : '';?>/><label class="half" for="starhalf" title="Sucks big time - 0.5 stars"></label>
-                          </fieldset>
-                        </span>
-                      </h5>
-                      <p><?php echo $row['testimonial'] ?></p>
-                    </div>
-                  </div>
-                  <?php
-                endforeach;?>
-                <!-- / REVIEW COMMENTS  -->
-
-                <form method="post">
-                  <h3>Leave Your Review
-                    <span class="fright">
-                      <fieldset class="rating" >
-                        <input type="radio" id="star5" name="rating" value="5" /><label class = "full" for="star5" title="Awesome - 5 stars"></label>
-                        <input type="radio" id="star4_5" name="rating" value="4.5" /><label onclick="$('#star4_5').prop('checked', true);" class="half" for="star4half" title="Pretty good - 4.5 stars"></label>
-                        <input type="radio" id="star4" name="rating" value="4" /><label class = "full" for="star4" title="Pretty good - 4 stars"></label>
-                        <input type="radio" id="star3_5" name="rating" value="3.5" /><label onclick="$('#star3_5').prop('checked', true);" class="half" for="star3half" title="Meh - 3.5 stars"></label>
-                        <input type="radio" id="star3" name="rating" value="3" /><label class = "full" for="star3" title="Meh - 3 stars"></label>
-                        <input type="radio" id="star2_5" name="rating" value="2.5" /><label onclick="$('#star2_5').prop('checked', true);" class="half" for="star2half" title="Kinda bad - 2.5 stars"></label>
-                        <input type="radio" id="star2" name="rating" value="2" /><label class = "full" for="star2" title="Kinda bad - 2 stars"></label>
-                        <input type="radio" id="star1_5" name="rating" value="1.5" /><label onclick="$('#star1_5').prop('checked', true);" class="half" for="star1half" title="Meh - 1.5 stars"></label>
-                        <input type="radio" id="star1" name="rating" value="1" /><label class = "full" for="star1" title="Sucks big time - 1 star"></label>
-                        <input type="radio" id="star0_5" name="rating" value="0.5" /><label onclick="$('#star0_5').prop('checked', true);" class="half" for="starhalf" title="Sucks big time - 0.5 stars"></label>
-                      </fieldset>
-                    </span></h3>
-                    <?php if(!$is_logged_in): ?>
-                      <p class="btnGreen fleft">
-                        <a href="<?php echo site_url('myaccount')?>">Log in to add review</a>
-                      </p>
-                    <?php endif; ?>
-
-                    <?php if($is_logged_in): ?>
-                      <div class="customer-rating">
-                        <div class="customer-review">
-                          <h5>
-
-                          </h5>
+                      <div class="ratingnum">
+                        <?php echo $ratingbar4 ?>%</div>
+                      </li>
+                      <li><label>5 Star</label>
+                        <div class="ratingbar">
+                          <div style="width: <?php
+                          echo $ratingbar5 = round((($u_rating_count['4.50'] + $u_rating_count['5.00']) / $rating_count) * 100);
+                          ?>%; background: #48c062; height: 10px"></div>
                         </div>
-                        <textarea name="testimonial"></textarea>
-                        <input type="submit" name="" value="Submit" style="margin-top:20px;">
+                        <div class="ratingnum">
+                          <?php echo $ratingbar5 ?>%
+                        </div>
+                      </li>
+                    </ul>
+                  </div>
+                </div>
+
+                <article class="ratings-list">
+
+                  <!-- REVIEW COMMENTS  -->
+                  <?php foreach($advisor_reviews as $row):
+                    ?>
+                    <div class="customer-rating">
+                      <div class="customer-pic"><img src="<?php echo get_avatar_url($row['reviewer_id'])?>"></div>
+                      <div class="customer-review">
+                        <h5>
+                          <?php echo get_user_meta($row['reviewer_id'], 'first_name', true)
+                          . ' ' . get_user_meta($row['reviewer_id'], 'last_name', true)?>
+                          <span class="fright">
+                            <fieldset class="rating">
+                              <input type="radio"  value="5" <?php echo ($row['rating'] == 5.0) ? 'checked' : '';?>/><label class = "full" for="star5" title="Awesome - 5 stars"></label>
+                              <input type="radio"  value="4 and a half" <?php echo ($row['rating'] == 4.5) ? 'checked' : '';?>/><label class="half" for="star4half" title="Pretty good - 4.5 stars"></label>
+                              <input type="radio"  value="4" <?php echo ($row['rating'] == 4.0) ? 'checked' : '';?>/><label class = "full" for="star4" title="Pretty good - 4 stars"></label>
+                              <input type="radio"  value="3 and a half" <?php echo ($row['rating'] == 3.5) ? 'checked' : '';?>/><label class="half" for="star3half" title="Meh - 3.5 stars"></label>
+                              <input type="radio"  value="3" <?php echo ($row['rating'] == 3.0) ? 'checked' : '';?>/><label class = "full" for="star3" title="Meh - 3 stars"></label>
+                              <input type="radio"  value="2 and a half" <?php echo ($row['rating'] == 2.5 ) ? 'checked' : '';?>/><label class="half" for="star2half" title="Kinda bad - 2.5 stars"></label>
+                              <input type="radio"  value="2" <?php echo ($row['rating'] == 2.0 ) ? 'checked' : '';?>/><label class = "full" for="star2" title="Kinda bad - 2 stars"></label>
+                              <input type="radio"  value="1 and a half" <?php echo ($row['rating'] == 1.5) ? 'checked' : '';?>/><label class="half" for="star1half" title="Meh - 1.5 stars"></label>
+                              <input type="radio"  value="1" <?php echo ($row['rating'] == 1.0) ? 'checked' : '';?>/><label class = "full" for="star1" title="Sucks big time - 1 star"></label>
+                              <input type="radio"  value="half" <?php echo ($row['rating'] == 0.5) ? 'checked' : '';?>/><label class="half" for="starhalf" title="Sucks big time - 0.5 stars"></label>
+                            </fieldset>
+                          </span>
+                        </h5>
+                        <p><?php echo $row['testimonial'] ?></p>
                       </div>
-                    </form>
-                  <?php endif; ?>
-                </section>
-              </article>
+                    </div>
+                    <?php
+                  endforeach;?>
+                  <!-- / REVIEW COMMENTS  -->
+
+                  <form method="post">
+                    <h3>Leave Your Review
+                      <span class="fright">
+                        <fieldset class="rating" >
+                          <input type="radio" id="star5" name="rating" value="5" /><label class = "full" for="star5" title="Awesome - 5 stars"></label>
+                          <input type="radio" id="star4_5" name="rating" value="4.5" /><label onclick="$('#star4_5').prop('checked', true);" class="half" for="star4half" title="Pretty good - 4.5 stars"></label>
+                          <input type="radio" id="star4" name="rating" value="4" /><label class = "full" for="star4" title="Pretty good - 4 stars"></label>
+                          <input type="radio" id="star3_5" name="rating" value="3.5" /><label onclick="$('#star3_5').prop('checked', true);" class="half" for="star3half" title="Meh - 3.5 stars"></label>
+                          <input type="radio" id="star3" name="rating" value="3" /><label class = "full" for="star3" title="Meh - 3 stars"></label>
+                          <input type="radio" id="star2_5" name="rating" value="2.5" /><label onclick="$('#star2_5').prop('checked', true);" class="half" for="star2half" title="Kinda bad - 2.5 stars"></label>
+                          <input type="radio" id="star2" name="rating" value="2" /><label class = "full" for="star2" title="Kinda bad - 2 stars"></label>
+                          <input type="radio" id="star1_5" name="rating" value="1.5" /><label onclick="$('#star1_5').prop('checked', true);" class="half" for="star1half" title="Meh - 1.5 stars"></label>
+                          <input type="radio" id="star1" name="rating" value="1" /><label class = "full" for="star1" title="Sucks big time - 1 star"></label>
+                          <input type="radio" id="star0_5" name="rating" value="0.5" /><label onclick="$('#star0_5').prop('checked', true);" class="half" for="starhalf" title="Sucks big time - 0.5 stars"></label>
+                        </fieldset>
+                      </span></h3>
+                      <?php if(!$is_logged_in): ?>
+                        <p class="btnGreen fleft">
+                          <a href="<?php echo site_url('myaccount')?>">Log in to add review</a>
+                        </p>
+                      <?php endif; ?>
+
+                      <?php if($is_logged_in): ?>
+                        <div class="customer-rating">
+                          <div class="customer-review">
+                            <h5>
+
+                            </h5>
+                          </div>
+                          <textarea name="testimonial"></textarea>
+                          <input type="submit" name="" value="Submit" style="margin-top:20px;">
+                        </div>
+                      </form>
+                    <?php endif; ?>
+                  </section>
+                </article>
 
 
-            </section>
+              </section>
 
-          </div>
+            </div>
 
 
-          <?php
-        endif;
-        get_footer(); ?>
+            <?php
+          endif;
+          get_footer(); ?>
 
-        <script type="text/javascript">
-        $(document).ready(function(){
+          <script type="text/javascript">
+          $(document).ready(function(){
 
-          triggerStar = function(id){
-            $('#' + id).prop('checked', true);
-            alert('Checked ' + id)
-          }
+            triggerStar = function(id){
+              $('#' + id).prop('checked', true);
+              alert('Checked ' + id)
+            }
 
-        });
-        </script>
+          });
+          </script>
