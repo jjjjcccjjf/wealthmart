@@ -70,7 +70,8 @@ else:
 
   // die(var_dump(array_unique(array_column($advisor_reviews, 'rating'))));
   $advisor_info = get_user_meta($_GET['a_id']);
-  // var_dump($advisor_info);
+  $advisor_data = get_userdata($_GET['a_id'])->data;
+  // var_dump();
   // die();
   ?>
   <div class="container">
@@ -83,20 +84,27 @@ else:
         </h1>
         <h4><?php echo $advisor_details['address'] ?></h4>
         <p><?php if($advisor_details){ echo str_replace(',', ', ', $advisor_details['expertise']); } ?></p>
-        <fieldset class="rating">
-          <input type="radio"  value="5" /><label class = "full" for="star5" title="Awesome - 5 stars"></label>
-          <input type="radio"  value="4 and a half" /><label class="half" for="star4half" title="Pretty good - 4.5 stars"></label>
-          <input type="radio"  value="4" /><label class = "full" for="star4" title="Pretty good - 4 stars"></label>
-          <input type="radio"  value="3 and a half" /><label class="half" for="star3half" title="Meh - 3.5 stars"></label>
-          <input type="radio"  value="3" /><label class = "full" for="star3" title="Meh - 3 stars"></label>
-          <input type="radio"  value="2 and a half" /><label class="half" for="star2half" title="Kinda bad - 2.5 stars"></label>
-          <input type="radio"  value="2" /><label class = "full" for="star2" title="Kinda bad - 2 stars"></label>
-          <input type="radio"  value="1 and a half" /><label class="half" for="star1half" title="Meh - 1.5 stars"></label>
-          <input type="radio"  value="1" /><label class = "full" for="star1" title="Sucks big time - 1 star"></label>
-          <input type="radio"  value="half" /><label class="half" for="starhalf" title="Sucks big time - 0.5 stars"></label>
-
+        <?php
+        $rating_count = count($advisor_reviews);
+        $all_ratings = array_column($advisor_reviews, 'rating');
+        /**
+        * get the average of all ratings
+        */
+        $avg_rating = number_format(array_sum($all_ratings) / $rating_count, 1);
+        ?>
+        <fieldset class="rating2">
+          <input type="radio"  value="5" <?php echo ($avg_rating <= 5.0 && $avg_rating > 4.5) ? 'checked' : '';?>/><label class = "full" for="star5" title="Awesome - 5 stars"></label>
+          <input type="radio"  value="4 and a half" <?php echo ($avg_rating <= 4.5 && $avg_rating > 4.0) ? 'checked' : '';?>/><label class="half" for="star4half" title="Pretty good - 4.5 stars"></label>
+          <input type="radio"  value="4" <?php echo ($avg_rating <= 4.0 && $avg_rating > 3.5) ? 'checked' : '';?>/><label class = "full" for="star4" title="Pretty good - 4 stars"></label>
+          <input type="radio"  value="3 and a half" <?php echo ($avg_rating <= 3.5 && $avg_rating > 3.0) ? 'checked' : '';?>/><label class="half" for="star3half" title="Meh - 3.5 stars"></label>
+          <input type="radio"  value="3" <?php echo ($avg_rating <= 3.0 && $avg_rating > 2.5) ? 'checked' : '';?>/><label class = "full" for="star3" title="Meh - 3 stars"></label>
+          <input type="radio"  value="2 and a half" <?php echo ($avg_rating <= 2.5 && $avg_rating > 2.0 ) ? 'checked' : '';?>/><label class="half" for="star2half" title="Kinda bad - 2.5 stars"></label>
+          <input type="radio"  value="2" <?php echo ($avg_rating <= 2.0 && $avg_rating > 1.5 ) ? 'checked' : '';?>/><label class = "full" for="star2" title="Kinda bad - 2 stars"></label>
+          <input type="radio"  value="1 and a half" <?php echo ($avg_rating <= 1.5 && $avg_rating > 1.0 ) ? 'checked' : '';?>/><label class="half" for="star1half" title="Meh - 1.5 stars"></label>
+          <input type="radio"  value="1" <?php echo ($avg_rating <= 1.0 && $avg_rating > 0.5) ? 'checked' : '';?>/><label class = "full" for="star1" title="Sucks big time - 1 star"></label>
+          <input type="radio"  value="half" <?php echo ($avg_rating <= 0.5) ? 'checked' : '';?>/><label class="half" for="starhalf" title="Sucks big time - 0.5 stars"></label>
         </fieldset>
-        <span>1 Review(s)</span>
+        <span><?php echo $rating_count?> Review(s)</span>
       </aside>
     </section>
     <section class="listing-details">
@@ -113,7 +121,7 @@ else:
               </li>
               <li><i class="fa fa-phone" aria-hidden="true"></i> <?php if($advisor_details){ echo $advisor_details['contact']; } ?>
               </li>
-              <li><i class="fa fa-envelope" aria-hidden="true"></i><?php echo $advisor_info->user_email; ?>
+              <li><i class="fa fa-envelope" aria-hidden="true"></i><?php echo $advisor_data->user_email; ?>
               </li>
             </ul>
             <p class="btnGreen">
@@ -281,16 +289,11 @@ else:
             </ul>
           <?php endif; ?>
           <section class="agent-review">
-            <h3><?php echo $rating_count = count($advisor_reviews) ?> Review(s)</h3>
+            <h3><?php echo $rating_count ?> Review(s)</h3>
             <div class="review-box">
               <aside class="overall-rating">
                 <p>Average Rating</p>
-                <h1><?php
-                $all_ratings = array_column($advisor_reviews, 'rating');
-                /**
-                * get the average of all ratings
-                */
-                echo $avg_rating = number_format(array_sum($all_ratings) / $rating_count, 1) ?></h1>
+                <h1><?php echo $avg_rating; ?></h1>
                 <fieldset class="rating2">
                   <input type="radio"  value="5" <?php echo ($avg_rating <= 5.0 && $avg_rating > 4.5) ? 'checked' : '';?>/><label class = "full" for="star5" title="Awesome - 5 stars"></label>
                   <input type="radio"  value="4 and a half" <?php echo ($avg_rating <= 4.5 && $avg_rating > 4.0) ? 'checked' : '';?>/><label class="half" for="star4half" title="Pretty good - 4.5 stars"></label>
@@ -302,6 +305,7 @@ else:
                   <input type="radio"  value="1 and a half" <?php echo ($avg_rating <= 1.5 && $avg_rating > 1.0 ) ? 'checked' : '';?>/><label class="half" for="star1half" title="Meh - 1.5 stars"></label>
                   <input type="radio"  value="1" <?php echo ($avg_rating <= 1.0 && $avg_rating > 0.5) ? 'checked' : '';?>/><label class = "full" for="star1" title="Sucks big time - 1 star"></label>
                   <input type="radio"  value="half" <?php echo ($avg_rating <= 0.5) ? 'checked' : '';?>/><label class="half" for="starhalf" title="Sucks big time - 0.5 stars"></label>
+                </fieldset>
                 </aside>
                 <div class="ratings-summary">
 
