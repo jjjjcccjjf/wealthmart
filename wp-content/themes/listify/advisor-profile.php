@@ -1,6 +1,6 @@
 <?php
 /*
-Template Name: View Advisor Profile
+Template Name: Advisor Profile
 */
 
 global $style;
@@ -31,7 +31,7 @@ if(isset($_POST['a_msg'])){
   $data['message'] = $_POST['a_msg'];
   $wpdb->insert('advisor_inbox', $data);
 
-  header('Location: ' . site_url('view-profile?a_id=' . $_GET['a_id']. "#"));
+  header('Location: ' . site_url('view-profile?sc=1&a_id=' . $_GET['a_id']. "#"));
   die();
 
 }
@@ -87,6 +87,11 @@ else:
   // die();
   ?>
   <div class="container">
+      <?php
+      if(@$_GET['sc'] == 1){ ?>
+        <div class="sc-msg">Message sent</div>
+      <?php }
+       ?>
     <section class="listing-banner" style="background: url(<?php echo theme_url; ?>images/bannerimg.jpg) no-repeat center center; background-size: cover;">
       <aside>
         <h1><?php echo $name; ?>
