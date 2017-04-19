@@ -232,7 +232,13 @@ $name = $first_name . " " . $last_name;
 					<input type="radio"  value="1" <?php echo ($avg_rating <= 1.0 && $avg_rating > 0.5) ? 'checked' : '';?>/><label class = "full" for="star1" title="Sucks big time - 1 star"></label>
 					<input type="radio"  value="half" <?php echo ($avg_rating <= 0.5) ? 'checked' : '';?>/><label class="half" for="starhalf" title="Sucks big time - 0.5 stars"></label>
 				</fieldset>
-				<span><?php echo $rating_count?> Review(s)</span>
+				<span><?php echo $rating_count?> Review(s)</span><br>
+			</aside>
+			<aside>
+				<a style="    color: whitesmoke;
+    text-decoration: underline;
+    font-weight: bold;
+    font-size: 17px;" href="<?php echo site_url('view-profile') . "?a_id=" . $GLOBALS['current_user']->ID ?>">View profile</a>
 			</aside>
 		</section>
 		<section class="listing-details">
