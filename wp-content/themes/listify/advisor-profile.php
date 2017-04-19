@@ -21,7 +21,25 @@ if(isset($_POST['testimonial'])){
   // Print last SQL query Error
   // echo $wpdb->last_error;
   // die();
-  header('Location: ' . site_url('view-profile?a_id=' . $GLOBALS['current_user']->ID));
+  header('Location: ' . site_url('view-profile?a_id=' . $_GET['a_id']. "#"));
+  die();
+}
+
+if(isset($_POST['a_msg'])){
+  $data['advisor_id'] = $_GET['a_id'];
+  $data['sender_id'] = $GLOBALS['current_user']->ID;
+  $data['message'] = $_POST['a_msg'];
+  $wpdb->insert('advisor_inbox', $data);
+  // Print last SQL query string
+  // echo $wpdb->last_query;
+  // Print last SQL query result
+  // echo $wpdb->last_result;
+  // Print last SQL query Error
+  // echo $wpdb->last_error;
+  // die();
+  header('Location: ' . site_url('view-profile?a_id=' . $_GET['a_id']. "#"));
+  die();
+
 }
 
 /**
@@ -125,7 +143,7 @@ else:
               </li>
             </ul>
             <p class="btnGreen">
-              <a href="#">Contact this Advisor</a>
+              <a href="#modal-contact-advisor">Contact this Advisor</a>
             </p>
             <p class="btnGreen">
               <a href="#">Refer this Advisor</a>
@@ -248,22 +266,22 @@ else:
 
           <h3>Rates per Consultation</h3>
           <section class="agent-content">
-                <?php
-                $args = array(
-                  'post_type' => 'product',
-                  'posts_per_page' => 12,
-                  'author' => 28
-                );
-                $query = new WP_Query( $args );
-                $posts = $query->posts;
+            <?php
+            $args = array(
+              'post_type' => 'product',
+              'posts_per_page' => 12,
+              'author' => 28
+            );
+            $query = new WP_Query( $args );
+            $posts = $query->posts;
 
-                foreach($posts as $post) {
-                  $price = get_post_meta($post->ID, '_regular_price');
-                  ?>
-                  <p><a href="<?php echo $post->guid?>"><?php
-                  echo $post->post_title
-                  ?></a> - <?php echo $price[0] . " " .  get_option('woocommerce_currency')?></p>
-                <?php }
+            foreach($posts as $post) {
+              $price = get_post_meta($post->ID, '_regular_price');
+              ?>
+              <p><a href="<?php echo $post->guid?>"><?php
+              echo $post->post_title
+              ?></a> - <?php echo $price[0] . " " .  get_option('woocommerce_currency')?></p>
+              <?php }
 
               wp_reset_postdata();
               ?>
@@ -271,63 +289,63 @@ else:
               <p>
                 <?php if($advisor_details){ echo $advisor_details['rates']; } ?>
               </p>
-          </section>
-          <hr>
-
-          <h3>Blog</h3>
-          <ul class="agents">
-            <?php
-            $blogs = get_posts(array('order' => 'DESC', 'orderby' => 'date', 'posts_per_page' => 2));
-
-            foreach($blogs as $blog){
-              ?>
-              <li>
-                <h5><?php echo $blog->post_title; ?></h5>
-                <p><?php echo $blog->post_excerpt; ?></p>
-                <p><a href="<?php echo get_permalink($blog->ID); ?>" class="readmore">Read More</a></p>
-              </li>
-              <?php } ?>
-            </ul>
-
+            </section>
             <hr>
 
-            <ul class="social-links">
-              <li class="fb">
-                <a href="<?php echo $advisor_details['social_fb'] ?>"><i class="fa fa-facebook" aria-hidden="true"></i>
-                </a>
-              </li>
-              <li class="gp">
-                <a href="<?php echo $advisor_details['social_gplus'] ?>"><i class="fa fa-google-plus" aria-hidden="true"></i>
-                </a>
-              </li>
-              <li class="in">
-                <a href="<?php echo $advisor_details['social_linkedin'] ?>"><i class="fa fa-linkedin" aria-hidden="true"></i>
-                </a>
-              </li>
-              <li class="sk">
-                <a href="<?php echo $advisor_details['social_skype'] ?>"><i class="fa fa-skype" aria-hidden="true"></i>
-                </a>
-              </li>
-            </ul>
-          <?php endif; ?>
-          <section class="agent-review">
-            <h3><?php echo $rating_count ?> Review(s)</h3>
-            <div class="review-box">
-              <aside class="overall-rating">
-                <p>Average Rating</p>
-                <h1><?php echo $avg_rating; ?></h1>
-                <fieldset class="rating2">
-                  <input type="radio"  value="5" <?php echo ($avg_rating <= 5.0 && $avg_rating > 4.5) ? 'checked' : '';?>/><label class = "full" for="star5" title="Awesome - 5 stars"></label>
-                  <input type="radio"  value="4 and a half" <?php echo ($avg_rating <= 4.5 && $avg_rating > 4.0) ? 'checked' : '';?>/><label class="half" for="star4half" title="Pretty good - 4.5 stars"></label>
-                  <input type="radio"  value="4" <?php echo ($avg_rating <= 4.0 && $avg_rating > 3.5) ? 'checked' : '';?>/><label class = "full" for="star4" title="Pretty good - 4 stars"></label>
-                  <input type="radio"  value="3 and a half" <?php echo ($avg_rating <= 3.5 && $avg_rating > 3.0) ? 'checked' : '';?>/><label class="half" for="star3half" title="Meh - 3.5 stars"></label>
-                  <input type="radio"  value="3" <?php echo ($avg_rating <= 3.0 && $avg_rating > 2.5) ? 'checked' : '';?>/><label class = "full" for="star3" title="Meh - 3 stars"></label>
-                  <input type="radio"  value="2 and a half" <?php echo ($avg_rating <= 2.5 && $avg_rating > 2.0 ) ? 'checked' : '';?>/><label class="half" for="star2half" title="Kinda bad - 2.5 stars"></label>
-                  <input type="radio"  value="2" <?php echo ($avg_rating <= 2.0 && $avg_rating > 1.5 ) ? 'checked' : '';?>/><label class = "full" for="star2" title="Kinda bad - 2 stars"></label>
-                  <input type="radio"  value="1 and a half" <?php echo ($avg_rating <= 1.5 && $avg_rating > 1.0 ) ? 'checked' : '';?>/><label class="half" for="star1half" title="Meh - 1.5 stars"></label>
-                  <input type="radio"  value="1" <?php echo ($avg_rating <= 1.0 && $avg_rating > 0.5) ? 'checked' : '';?>/><label class = "full" for="star1" title="Sucks big time - 1 star"></label>
-                  <input type="radio"  value="half" <?php echo ($avg_rating <= 0.5) ? 'checked' : '';?>/><label class="half" for="starhalf" title="Sucks big time - 0.5 stars"></label>
-                </fieldset>
+            <h3>Blog</h3>
+            <ul class="agents">
+              <?php
+              $blogs = get_posts(array('order' => 'DESC', 'orderby' => 'date', 'posts_per_page' => 2));
+
+              foreach($blogs as $blog){
+                ?>
+                <li>
+                  <h5><?php echo $blog->post_title; ?></h5>
+                  <p><?php echo $blog->post_excerpt; ?></p>
+                  <p><a href="<?php echo get_permalink($blog->ID); ?>" class="readmore">Read More</a></p>
+                </li>
+                <?php } ?>
+              </ul>
+
+              <hr>
+
+              <ul class="social-links">
+                <li class="fb">
+                  <a href="<?php echo $advisor_details['social_fb'] ?>"><i class="fa fa-facebook" aria-hidden="true"></i>
+                  </a>
+                </li>
+                <li class="gp">
+                  <a href="<?php echo $advisor_details['social_gplus'] ?>"><i class="fa fa-google-plus" aria-hidden="true"></i>
+                  </a>
+                </li>
+                <li class="in">
+                  <a href="<?php echo $advisor_details['social_linkedin'] ?>"><i class="fa fa-linkedin" aria-hidden="true"></i>
+                  </a>
+                </li>
+                <li class="sk">
+                  <a href="<?php echo $advisor_details['social_skype'] ?>"><i class="fa fa-skype" aria-hidden="true"></i>
+                  </a>
+                </li>
+              </ul>
+            <?php endif; ?>
+            <section class="agent-review">
+              <h3><?php echo $rating_count ?> Review(s)</h3>
+              <div class="review-box">
+                <aside class="overall-rating">
+                  <p>Average Rating</p>
+                  <h1><?php echo $avg_rating; ?></h1>
+                  <fieldset class="rating2">
+                    <input type="radio"  value="5" <?php echo ($avg_rating <= 5.0 && $avg_rating > 4.5) ? 'checked' : '';?>/><label class = "full" for="star5" title="Awesome - 5 stars"></label>
+                    <input type="radio"  value="4 and a half" <?php echo ($avg_rating <= 4.5 && $avg_rating > 4.0) ? 'checked' : '';?>/><label class="half" for="star4half" title="Pretty good - 4.5 stars"></label>
+                    <input type="radio"  value="4" <?php echo ($avg_rating <= 4.0 && $avg_rating > 3.5) ? 'checked' : '';?>/><label class = "full" for="star4" title="Pretty good - 4 stars"></label>
+                    <input type="radio"  value="3 and a half" <?php echo ($avg_rating <= 3.5 && $avg_rating > 3.0) ? 'checked' : '';?>/><label class="half" for="star3half" title="Meh - 3.5 stars"></label>
+                    <input type="radio"  value="3" <?php echo ($avg_rating <= 3.0 && $avg_rating > 2.5) ? 'checked' : '';?>/><label class = "full" for="star3" title="Meh - 3 stars"></label>
+                    <input type="radio"  value="2 and a half" <?php echo ($avg_rating <= 2.5 && $avg_rating > 2.0 ) ? 'checked' : '';?>/><label class="half" for="star2half" title="Kinda bad - 2.5 stars"></label>
+                    <input type="radio"  value="2" <?php echo ($avg_rating <= 2.0 && $avg_rating > 1.5 ) ? 'checked' : '';?>/><label class = "full" for="star2" title="Kinda bad - 2 stars"></label>
+                    <input type="radio"  value="1 and a half" <?php echo ($avg_rating <= 1.5 && $avg_rating > 1.0 ) ? 'checked' : '';?>/><label class="half" for="star1half" title="Meh - 1.5 stars"></label>
+                    <input type="radio"  value="1" <?php echo ($avg_rating <= 1.0 && $avg_rating > 0.5) ? 'checked' : '';?>/><label class = "full" for="star1" title="Sucks big time - 1 star"></label>
+                    <input type="radio"  value="half" <?php echo ($avg_rating <= 0.5) ? 'checked' : '';?>/><label class="half" for="starhalf" title="Sucks big time - 0.5 stars"></label>
+                  </fieldset>
                 </aside>
                 <div class="ratings-summary">
 
@@ -495,3 +513,23 @@ else:
 
           });
           </script>
+
+          <!-- Modal -->
+          <div class="modal" id="modal-contact-advisor" aria-hidden="true">
+            <div class="modal-dialog">
+              <div class="modal-header">
+                <h2>Send a message</h2>
+                <a href="#" class="btn-close" aria-hidden="true">×</a>
+              </div>
+              <div class="modal-body">
+                <p>Say something nice to <?php echo $name ?>...</p>
+                <form method="post">
+                  <textarea name="a_msg" rows="8" cols="80" placeholder="Your message..."></textarea>
+                </div>
+                <div class="modal-footer">
+                  <button type="submit" class="btn-submit">Send</button>
+                </form>
+              </div>
+            </div>
+          </div>
+          <!-- /Modal -->
