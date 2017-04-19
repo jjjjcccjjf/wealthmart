@@ -30,21 +30,21 @@ get_header();
 
 <ul>
   <?php
-    foreach($vendor_ids as $vendor_id){
-      $advisor_details = $wpdb->get_row('SELECT * FROM advisor_details WHERE ID = '. $vendor_id['ID'] , ARRAY_A);
-      $advisor_details_meta = $wpdb->get_results('SELECT * FROM advisor_details_meta WHERE ID = '. $vendor_id['ID'] , ARRAY_A);
+  foreach($vendor_ids as $vendor_id){
+    $advisor_details = $wpdb->get_row('SELECT * FROM advisor_details WHERE ID = '. $vendor_id['ID'] , ARRAY_A);
+    $advisor_details_meta = $wpdb->get_results('SELECT * FROM advisor_details_meta WHERE ID = '. $vendor_id['ID'] , ARRAY_A);
 
-      $first_name = get_user_meta($vendor_id['ID'], 'first_name', true);
-      $last_name = get_user_meta($vendor_id['ID'], 'last_name', true);
-      $name = $first_name . " " . $last_name;
+    $first_name = get_user_meta($vendor_id['ID'], 'first_name', true);
+    $last_name = get_user_meta($vendor_id['ID'], 'last_name', true);
+    $name = $first_name . " " . $last_name;
 
-      ?>
+    ?>
 
-      <li><a href="<?php echo site_url('view-profile') . "?a_id=" . $vendor_id['ID'] ?>"><?php echo $name ?></a></li>
+    <li><a href="<?php echo site_url('view-profile') . "?a_id=" . $vendor_id['ID'] ?>"><?php echo $name ?></a></li>
 
     <?php }
 
-  ?>
-</ul>
+    ?>
+  </ul>
 
-<?php get_footer(); ?>
+<?php get_footer();
