@@ -26,17 +26,11 @@ if(isset($_POST['testimonial'])){
 }
 
 if(isset($_POST['a_msg'])){
-  $data['advisor_id'] = $_GET['a_id'];
+  $data['receiver_id'] = $_GET['a_id'];
   $data['sender_id'] = $GLOBALS['current_user']->ID;
   $data['message'] = $_POST['a_msg'];
   $wpdb->insert('advisor_inbox', $data);
-  // Print last SQL query string
-  // echo $wpdb->last_query;
-  // Print last SQL query result
-  // echo $wpdb->last_result;
-  // Print last SQL query Error
-  // echo $wpdb->last_error;
-  // die();
+
   header('Location: ' . site_url('view-profile?a_id=' . $_GET['a_id']. "#"));
   die();
 
@@ -125,6 +119,25 @@ else:
         <span><?php echo $rating_count?> Review(s)</span>
       </aside>
     </section>
+    <!-- Modal -->
+    <div class="modal" id="modal-contact-advisor" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-header">
+          <h2>Send a message</h2>
+          <a href="#" class="btn-close" aria-hidden="true">×</a>
+        </div>
+        <div class="modal-body">
+          <p>Say something nice to <?php echo $name ?>...</p>
+          <form method="post">
+            <textarea name="a_msg" rows="8" cols="80" placeholder="Your message..."></textarea>
+          </div>
+          <div class="modal-footer">
+            <button type="submit" class="btn-submit">Send</button>
+          </form>
+        </div>
+      </div>
+    </div>
+    <!-- /Modal -->
     <section class="listing-details">
       <aside class="sidebar">
         <div class="profile-pic">
@@ -513,23 +526,3 @@ else:
 
           });
           </script>
-
-          <!-- Modal -->
-          <div class="modal" id="modal-contact-advisor" aria-hidden="true">
-            <div class="modal-dialog">
-              <div class="modal-header">
-                <h2>Send a message</h2>
-                <a href="#" class="btn-close" aria-hidden="true">×</a>
-              </div>
-              <div class="modal-body">
-                <p>Say something nice to <?php echo $name ?>...</p>
-                <form method="post">
-                  <textarea name="a_msg" rows="8" cols="80" placeholder="Your message..."></textarea>
-                </div>
-                <div class="modal-footer">
-                  <button type="submit" class="btn-submit">Send</button>
-                </form>
-              </div>
-            </div>
-          </div>
-          <!-- /Modal -->
