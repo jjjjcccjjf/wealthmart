@@ -248,7 +248,29 @@ else:
 
           <h3>Rates per Consultation</h3>
           <section class="agent-content">
-            <?php if($advisor_details){ echo $advisor_details['rates']; } ?>
+                <?php
+                $args = array(
+                  'post_type' => 'product',
+                  'posts_per_page' => 12,
+                  'author' => 28
+                );
+                $query = new WP_Query( $args );
+                $posts = $query->posts;
+
+                foreach($posts as $post) {
+                  $price = get_post_meta($post->ID, '_regular_price');
+                  ?>
+                  <p><a href="<?php echo $post->guid?>"><?php
+                  echo $post->post_title
+                  ?></a> - <?php echo $price[0] . " " .  get_option('woocommerce_currency')?></p>
+                <?php }
+
+              wp_reset_postdata();
+              ?>
+
+              <p>
+                <?php if($advisor_details){ echo $advisor_details['rates']; } ?>
+              </p>
           </section>
           <hr>
 
