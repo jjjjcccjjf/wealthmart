@@ -85,11 +85,11 @@ function bbloomer_user_products_bought() {
   ob_start();
 
   woocommerce_product_loop_start();
-
+  $i = 0;
   while ( $loop->have_posts() ) : $loop->the_post();
   $theid = get_the_ID();
   if ( wc_customer_bought_product( $current_user->user_email, $current_user->ID, $theid ) ) {
-    wc_get_template_part( 'content', 'product' );
+    wc_get_template_part( 'content', 'product' ); $i++;
   }
 endwhile;
 
@@ -98,6 +98,9 @@ woocommerce_product_loop_end();
 woocommerce_reset_loop();
 wp_reset_postdata();
 
+if($i<=0){
+  echo "No new purchases. ";
+}
 return '<div class="woocommerce columns-' . $columns . '">' . ob_get_clean() . '</div>';
 } # END fnc
 
