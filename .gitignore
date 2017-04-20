@@ -33,3 +33,4 @@ wp-content/plugins/*
 # specify (see the commented-out example for a hint on how to do this.)
 wp-content/themes/*
 !wp-content/themes/listify/
+!wp-content/themes/listify-child/

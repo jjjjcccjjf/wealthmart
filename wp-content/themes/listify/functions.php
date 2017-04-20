@@ -240,26 +240,6 @@ if ( ! function_exists( 'listify_setup' ) ) :
                   add_action( 'wp_enqueue_scripts', 'listify_scripts' );
 
                   /**
-                  * email user whenever role changed!
-                  * @author: @jjjjcccjjf
-                  * @link http://wpsnipp.com/index.php/functions-php/send-email-notification-when-user-role-changes/
-                  */
-                  add_action( 'set_user_role', function( $user_id, $new_role, $old_role )
-                  {
-                    if ($new_role == 'vendor') {
-                      $site_url = get_bloginfo('wpurl');
-                      $user_info = get_userdata( $user_id );
-                      $to = $user_info->user_email;
-                      $subject = "Role changed: ".$site_url."";
-                      $message = "Hello " .$user_info->display_name . " your role has changed on ".$site_url.", congratulations you are now a " . $new_role . ".";
-                      $message .= "\n\nYou can access advisor listings by clicking this link: " . site_url('advisor-listings');
-                      $message .= "\n\nYou can access your advisor profile by clicking this link: " . site_url('advisor-account');
-                      wp_mail($to, $subject, $message);
-                    }
-
-                  }, 10, 3 );
-
-                  /**
                   * Adds custom classes to the array of body classes.
                   */
                   function listify_body_classes( $classes ) {
