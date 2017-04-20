@@ -53,7 +53,54 @@ add_action( 'set_user_role', function( $user_id, $new_role, $old_role )
     wp_mail($to, $subject, $message);
   }
 
-}, 10, 3 );
+}, 10, 3 ); # END fnc
+
+/**
+* @snippet       Display All Products Purchased by User - WooCommerce
+* @how-to        Watch tutorial @ https://businessbloomer.com/?p=19055
+* @sourcecode    https://businessbloomer.com/?p=22004
+* @author        Rodolfo Melogli
+* @compatible    WC 2.6.14, WP 4.7.2, PHP 5.5.9
+*/
+
+add_shortcode( 'my_products', 'bbloomer_user_products_bought' );
+
+function bbloomer_user_products_bought() {
+  global $product, $woocommerce, $woocommerce_loop;
+  $columns = 3;
+  $current_user = wp_get_current_user();
+  $args = array(
+    'post_type'             => 'product',
+    'post_status'           => 'publish',
+    'meta_query'            => array(
+      array(
+        'key'           => '_visibility',
+        'value'         => array('catalog', 'visible'),
+        'compare'       => 'IN'
+      )
+    )
+  );
+  $loop = new WP_Query($args);
+
+  ob_start();
+
+  woocommerce_product_loop_start();
+
+  while ( $loop->have_posts() ) : $loop->the_post();
+  $theid = get_the_ID();
+  if ( wc_customer_bought_product( $current_user->user_email, $current_user->ID, $theid ) ) {
+    wc_get_template_part( 'content', 'product' );
+  }
+endwhile;
+
+woocommerce_product_loop_end();
+
+woocommerce_reset_loop();
+wp_reset_postdata();
+
+return '<div class="woocommerce columns-' . $columns . '">' . ob_get_clean() . '</div>';
+} # END fnc
+
 
 
 add_filter('woocommerce_login_redirect', 'login_redirect', 10, 2);
