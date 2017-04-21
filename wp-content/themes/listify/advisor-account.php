@@ -1,3 +1,4 @@
+
 <?php
 /*
 Template Name: Advisor Account
@@ -493,16 +494,14 @@ $name = $first_name . " " . $last_name;
 	foreach($posts as $post) {
 		$price = get_post_meta($post->ID, '_regular_price');
 		?>
-		<p><a href="<?php echo $post->guid?>"><?php
+		<p><?php
 		echo $post->post_title
-		?></a> - <?php echo $price[0] . " " .  get_option('woocommerce_currency')?></p>
+		?> - <?php echo $price[0] . " " .  get_option('woocommerce_currency')?></p>
 	<?php }
 
 	wp_reset_postdata();
 	?>
-	
-	<p><sub>Add custom rates below.</sub></p>
-	<textarea name="rates"><?php if($advisor_details){ echo $advisor_details['rates']; } ?></textarea>
+
 </section>
 <hr>
 

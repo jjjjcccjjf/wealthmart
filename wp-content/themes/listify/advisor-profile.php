@@ -180,9 +180,9 @@ else:
               <a href="#" class="btn-close" aria-hidden="true">×</a>
             </div>
             <div class="modal-body">
-              <p>Say something nice to <?php echo $name ?>...</p>
-              <form method="post">
-                <textarea name="a_msg" rows="8" cols="80" placeholder="Your message..."></textarea>
+              <p>Say something nice to <?php echo $name ?></p>
+              <form method="post">``
+                <textarea name="a_msg" rows="8" cols="80" placeholder="Your message"></textarea>
               </div>
               <div class="modal-footer">
                 <button type="submit" class="btn-submit">Send</button>
@@ -199,12 +199,17 @@ else:
               <a href="#" class="btn-close" aria-hidden="true">×</a>
             </div>
             <div class="modal-body">
-              <p>Choose your preferred date and time to meet with <?php echo $name ?></p>
               <form method="post">
+                <p>Choose your preferred date and time to meet with <?php echo $name ?></p>
                 <input type="datetime-local" name="apt_dt" value="">
-                <input type="hidden" name="apt_aname" value="<?php echo $name ?>">
-                <input type="hidden" name="apt_price" value="<?php #TODO: static price ?>">
-                <!--  add product details here -->
+                <br>
+                <br>
+                <p>Choose the product/service you want to avail</p>
+                <select name="product_id">
+                  <option>lorem ipsum</option>
+                  <option>lorem ipsum</option>
+                  <option>lorem ipsum</option>
+                </select>
               </div>
               <div class="modal-footer">
                 <button type="submit" class="btn-submit">Book Appointment</button>
@@ -366,17 +371,13 @@ else:
                 foreach($posts as $post) {
                   $price = get_post_meta($post->ID, '_regular_price');
                   ?>
-                  <p><a href="<?php echo $post->guid?>"><?php
+                  <p><?php
                   echo $post->post_title
-                  ?></a> - <?php echo $price[0] . " " .  get_option('woocommerce_currency')?></p>
+                  ?> - <?php echo $price[0] . " " .  get_option('woocommerce_currency')?></p>
                   <?php }
 
                   wp_reset_postdata();
                   ?>
-
-                  <p>
-                    <?php if($advisor_details){ echo $advisor_details['rates']; } ?>
-                  </p>
                 </section>
                 <hr>
 
