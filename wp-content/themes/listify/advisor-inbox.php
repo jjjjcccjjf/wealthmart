@@ -81,7 +81,8 @@ get_header();
               </p>
               <hr>
               <p><?php echo $msg['message'] ?></p>
-              <input type="hidden" id="receiver_<?= $msg['id'] ?>" value="<?= $msg['sender_id'] ?>"><br>
+              <input type="hidden" id="receiver_<?= $msg['id'] ?>" value="<?= $msg['sender_id'] ?>">
+              <hr>
               <a href="#modal-reply" onclick="setReply('<?= $msg['id'] ?>')" class="reply-btn">Reply</a>
             </div>
 
@@ -116,7 +117,8 @@ get_header();
                 <span style="display:none" id="name_<?= $msg['id'] ?>"><?php echo $sender_name ?></span>
                 <hr>
                 <p><?php echo $msg['message'] ?></p>
-                <input type="hidden" id="receiver_<?= $msg['id'] ?>" value="<?= $msg['sender_id'] ?>"><br>
+                <input type="hidden" id="receiver_<?= $msg['id'] ?>" value="<?= $msg['sender_id'] ?>">
+                <hr>
                 <a href="#modal-reply" onclick="setReply('<?= $msg['id'] ?>')" class="reply-btn">Reply</a>
               </div>
 
