@@ -4,3 +4,4 @@
 1. Export/Import SQL
 1. Add `Inbox` to navigation menu (both customer and vendor)
 1. Make page for each new template
+1. Add `Recently Purchased Products` shortcode to `Account` page
