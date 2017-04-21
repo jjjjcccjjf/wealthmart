@@ -101,7 +101,7 @@ wp_reset_postdata();
 if($i<=0){
   echo "No new purchases. ";
 }
-return '<div class="woocommerce columns-' . $columns . '">' . ob_get_clean() . '</div>';
+return '<div class="fn-recent-purchases woocommerce columns-' . $columns . '"><h1>Your recent purchases</h1>' . ob_get_clean() . '</div>';
 } # END fnc
 
 
