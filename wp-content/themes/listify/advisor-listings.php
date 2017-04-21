@@ -28,7 +28,8 @@ get_header();
 
 ?>
 
-<ul>
+<div style="margin:27px"><h2>Advisor Listings</h2></div>
+<div class="row">
   <?php
   foreach($vendor_ids as $vendor_id){
     $advisor_details = $wpdb->get_row('SELECT * FROM advisor_details WHERE ID = '. $vendor_id['ID'] , ARRAY_A);
@@ -40,11 +41,39 @@ get_header();
 
     ?>
 
-    <li><a href="<?php echo site_url('view-profile') . "?a_id=" . $vendor_id['ID'] ?>"><?php echo $name ?></a></li>
+    <div class="col-sm-4 card-div">
+      <a href="<?php echo site_url('view-profile') . "?a_id=" . $vendor_id['ID'] ?>">
+        <label class="pure-toggle card-user" for="pure-toggle">
+          <div class="header">
+          </div>
+          <div class="avatar">
+            <img src="<?php echo get_avatar_url($vendor_id['ID'])?>" alt="...">
+          </div>
+          <div class="text">
+            <h3><?php echo $name ?></h3>
+          </div>
+        </a>
+      </label>
+    </div> <!-- end card div -->
 
     <?php }
 
     ?>
-  </ul>
 
-<?php get_footer();
+    <div class="col-sm-4 card-div">
+      <a href="<?php echo site_url('view-profile') . "?a_id=" . $vendor_id['ID'] ?>">
+        <label class="pure-toggle card-user" for="pure-toggle">
+          <div class="header">
+          </div>
+          <div class="avatar">
+            <img src="<?php echo get_avatar_url($vendor_id['ID'])?>" alt="...">
+          </div>
+          <div class="text">
+            <h3><?php echo $name ?></h3>
+          </div>
+        </a>
+      </label>
+    </div> <!-- end card div -->
+  </div>
+
+  <?php get_footer();
