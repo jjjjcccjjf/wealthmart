@@ -273,3 +273,29 @@ button {font: 18px/24px 'avenirroman'; margin-left: 20px; float: right; border: 
 	padding: 2px;
 	font-size: 17px;
 }
+
+/*inbox no jutsu
+@jjjjcccjjf*/
+.inbox-card{
+	background: white;
+	border: 0.1px solid gainsboro;
+	border-radius: 10px;
+  box-shadow: gainsboro 0.5px 0.5px 12px;
+	margin: 15px 0px 15px;
+	padding: 20px;
+}
+
+.inbox-card p {
+	margin-bottom: 10px;
+}
+
+.inbox-card hr {
+	margin-top: 0px;
+}
+.inbox-card .reply-btn{
+	background: #4fe47d;
+	padding: 5px;
+	border-radius: 5px;
+	box-shadow: gainsboro 1px 1px 4px;
+	color: white;
+}

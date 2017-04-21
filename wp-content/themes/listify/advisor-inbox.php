@@ -14,7 +14,8 @@ if(isset($_POST['a_msg'])){
 
 }
 
-$messages = $wpdb->get_results('SELECT * FROM advisor_inbox WHERE receiver_id = ' . $GLOBALS['current_user']->ID, ARRAY_A);
+$inbox = $wpdb->get_results('SELECT * FROM advisor_inbox WHERE receiver_id = ' . $GLOBALS['current_user']->ID . ' AND is_appointment = 0', ARRAY_A);
+$appointments = $wpdb->get_results('SELECT * FROM advisor_inbox WHERE receiver_id = ' . $GLOBALS['current_user']->ID . ' AND is_appointment = 1', ARRAY_A);
 
 global $style;
 
@@ -50,50 +51,98 @@ get_header();
 
 
 <div class="container">
-    <?php
-    if(@$_GET['sc'] == 1){?>
-      <div class="sc-msg">Message sent</div>
+  <?php
+  if(@$_GET['sc'] == 1){?>
+    <div class="sc-msg">Message sent</div>
     <?php }
     ?>
 
-  <ul>
-    <?php
+    <div class="row">
 
-    if(count($messages) > 0 ):
-      foreach($messages as $msg){
 
-        $first_name = get_user_meta($msg['sender_id'], 'first_name', true);
-        $last_name = get_user_meta($msg['sender_id'], 'last_name', true);
-        $sender_name = $first_name . " " . $last_name;
+      <div class="col-md-6">
+        <h2>Inbox</h2>
 
-        ?>
+        <?php
 
-        <li>
-          <p id="name_<?= $msg['id'] ?>"><?php echo $sender_name ?></p>
-          <p><?php echo $msg['message'] ?></p>
-          <input type="hidden" id="receiver_<?= $msg['id'] ?>" value="<?= $msg['sender_id'] ?>">
-          <a href="#modal-reply" onclick="setReply('<?= $msg['id'] ?>')" class="">Reply</a>
-        </li>
+        if(count($inbox) > 0 ):
+          foreach($inbox as $msg){
 
-        <?php }
-      else:
-        ?>
-        <p>
-          No new messages.
-        </p>
-      <?php endif;
-      ?>
-    </ul>
-  </div>
-  <?php get_footer();?>
+            $first_name = get_user_meta($msg['sender_id'], 'first_name', true);
+            $last_name = get_user_meta($msg['sender_id'], 'last_name', true);
+            $sender_name = $first_name . " " . $last_name;
+            $user_email = get_userdata($msg['sender_id'])->data->user_email
 
-  <script type="text/javascript">
-  $(document).ready(function(){
-    setReply = function(id){
-      var sender_name = $("#name_" + id).text();
-      var receiver_id = $("#receiver_" + id).val();
-      $("#receiver_id").val(receiver_id);
-      $("#reply_to").text(sender_name);
-    }
-  })
-  </script>
+            ?>
+            <div class="inbox-card" >
+              <p>
+                From: <span id="name_<?= $msg['id'] ?>"><?php echo $sender_name ?></span>
+                <a href="mailto:<?php echo $user_email ?>">&lt;<?php echo $user_email ?>&gt;</a>
+              </p>
+              <hr>
+              <p><?php echo $msg['message'] ?></p>
+              <input type="hidden" id="receiver_<?= $msg['id'] ?>" value="<?= $msg['sender_id'] ?>"><br>
+              <a href="#modal-reply" onclick="setReply('<?= $msg['id'] ?>')" class="reply-btn">Reply</a>
+            </div>
+
+            <?php }
+          else:
+            ?>
+            <div class="inbox-card" >
+              <p>
+                No new messages.
+              </p>
+            </div>
+          <?php endif;
+          ?>
+        </div>
+
+        <div class="col-md-6">
+          <h2>Appointments</h2>
+
+          <?php
+
+          if(count($appointments) > 0 ):
+            foreach($appointments as $msg){
+
+              $first_name = get_user_meta($msg['sender_id'], 'first_name', true);
+              $last_name = get_user_meta($msg['sender_id'], 'last_name', true);
+              $sender_name = $first_name . " " . $last_name;
+              $user_email = get_userdata($msg['sender_id'])->data->user_email
+
+              ?>
+              <div class="inbox-card" >
+                <p>From: System</p>
+                <span style="display:none" id="name_<?= $msg['id'] ?>"><?php echo $sender_name ?></span>
+                <hr>
+                <p><?php echo $msg['message'] ?></p>
+                <input type="hidden" id="receiver_<?= $msg['id'] ?>" value="<?= $msg['sender_id'] ?>"><br>
+                <a href="#modal-reply" onclick="setReply('<?= $msg['id'] ?>')" class="reply-btn">Reply</a>
+              </div>
+
+              <?php }
+            else:
+              ?>
+              <div class="inbox-card" >
+                <p>No new appointments.</p>
+              </div>
+            <?php endif;
+            ?>
+          </div>
+
+
+        </div> <!-- end of row container -->
+
+
+        <?php get_footer();?>
+
+        <script type="text/javascript">
+        $(document).ready(function(){
+          setReply = function(id){
+            var sender_name = $("#name_" + id).text();
+            var receiver_id = $("#receiver_" + id).val();
+            $("#receiver_id").val(receiver_id);
+            $("#reply_to").text(sender_name);
+          }
+        })
+        </script>
