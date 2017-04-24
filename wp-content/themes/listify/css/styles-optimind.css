@@ -292,7 +292,7 @@ button {font: 18px/24px 'avenirroman'; margin-left: 20px; float: right; border: 
 .inbox-card hr {
 	margin-top: 0px;
 }
-.inbox-card .reply-btn{
+.reply-btn{
 	background: #4fe47d;
 	padding: 5px;
 	border-radius: 5px;

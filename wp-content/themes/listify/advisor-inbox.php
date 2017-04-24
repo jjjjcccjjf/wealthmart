@@ -3,6 +3,17 @@
 Template Name: Advisor Inbox
 */
 
+# We get all user IDs from the database
+$users = get_users();
+$user_ids = array();
+
+foreach($users as $user){
+  $user_ids[] = $user->data->ID;
+}
+$user_ids = implode(',', $user_ids);
+# / We get all user IDs from the database
+
+
 if(isset($_POST['a_msg'])){
   $data['receiver_id'] = $_POST['receiver_id'];
   $data['sender_id'] = $GLOBALS['current_user']->ID;
@@ -11,7 +22,6 @@ if(isset($_POST['a_msg'])){
 
   header('Location: ' . site_url('advisor-inbox/?sc=1#'));
   die();
-
 }
 
 $msgs = $wpdb->get_results('SELECT * FROM advisor_inbox WHERE receiver_id = ' . $GLOBALS['current_user']->ID . ' AND type = 0', ARRAY_A); # 0 - standard message
@@ -48,6 +58,24 @@ get_header();
   </div>
 </div>
 <!-- /Modal -->
+<!-- Modal Appointment -->
+<div class="modal" id="modal-announcement" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-header">
+      <h2>Send an announcement to everyone</h2>
+      <a href="#" class="btn-close" aria-hidden="true">×</a>
+    </div>
+    <div class="modal-body">
+      <form method="post" id="announcementForm">
+        <textarea id="announcement" name="announcement" rows="8" cols="80" placeholder="Your message"></textarea>
+      </div>
+      <div class="modal-footer">
+        <button type="submit" class="btn-submit">Send</button>
+      </form>
+    </div>
+  </div>
+</div>
+<!-- /Modal Appointment -->
 
 
 <div class="container">
@@ -99,12 +127,15 @@ get_header();
         </div>
 
         <div class="col-md-6">
-          <h2>
+          <h2 style='margin: 36px 0px 52px;'>
             System Messages
             <br>
             <sub>Appointments &amp; Announcements</sub>
+            <br>
+            <a href="#modal-announcement">
+              <button style="margin-top:13px;float:left;" class="reply-btn">Make announcement</button>
+            </a>
           </h2>
-
           <?php
 
           if(count($sys_msgs) > 0 ):
@@ -152,5 +183,27 @@ get_header();
             $("#receiver_id").val(receiver_id);
             $("#reply_to").text(sender_name);
           }
+
+          $('#announcementForm').on('submit', function(e){
+            e.preventDefault();
+            ajaxAnnounce();
+          });
+
+          ajaxAnnounce = function(meta_id, meta_key){
+            $.ajax({
+              url:"<?php echo site_url(). "/wp-content/themes/listify/ajax/announce.php"?>",
+              type: "POST",
+              data: {
+                'ids': '<?php echo $user_ids ?>',
+                'announcement': $('#announcement').val()
+              },
+              success:function(data){
+                alert(data);
+              } // success end
+            }); // ajax end
+
+            // window.location = "<?php echo site_url('advisor-inbox?sc=1#')?>";
+          } //function body end
+
         })
         </script>

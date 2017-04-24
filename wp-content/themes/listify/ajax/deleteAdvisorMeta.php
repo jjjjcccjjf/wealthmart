@@ -1,6 +1,6 @@
 <?php
 
-$path = $_SERVER['DOCUMENT_ROOT'] . '/wealthmart';
+$path = $_SERVER['DOCUMENT_ROOT'] . '/wealthmart'; #TODO: Change me on live
 
 include_once $path . '/wp-config.php';
 include_once $path . '/wp-load.php';
