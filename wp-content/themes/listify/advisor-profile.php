@@ -125,6 +125,17 @@ else:
   $advisor_data = get_userdata($_GET['a_id'])->data;
   // var_dump();
   // die();
+
+  # Products for contact advisor block
+  $args = array(
+    'post_type' => 'product',
+    'posts_per_page' => -1,
+    'author' => $_GET['a_id']
+  );
+  $query = new WP_Query( $args );
+  $product_dd = $query->posts;
+  # /Products for contact advisor block
+
   ?>
   <div class="container">
     <?php
@@ -204,15 +215,7 @@ else:
                 <select name="product_id" required="required">
 
                   <?php
-                  $args = array(
-                    'post_type' => 'product',
-                    'posts_per_page' => -1,
-                    'author' => $_GET['a_id']
-                  );
-                  $query = new WP_Query( $args );
-                  $posts = $query->posts;
-
-                  foreach($posts as $post) {
+                  foreach($product_dd as $post) {
                     $price = get_post_meta($post->ID, '_regular_price');
                     ?>
                     <option value="<?php echo $post->ID ?>"><?php
@@ -246,20 +249,20 @@ else:
                     </li>
                     <li><i class="fa fa-phone" aria-hidden="true"></i> <?php if($advisor_details){ echo $advisor_details['contact']; } ?>
                     </li>
-                    <li><i class="fa fa-envelope" aria-hidden="true"></i><?php echo $advisor_data->user_email; ?>
+                    <li>
+                    <a href="mailto:<?php echo $advisor_data->user_email; ?>">
+                      <i class="fa fa-envelope" aria-hidden="true"></i><?php echo $advisor_data->user_email; ?>
+                    </a>
                     </li>
                   </ul>
                   <p class="btnGreen">
                     <a href="#modal-contact-advisor">Contact this Advisor</a>
                   </p>
-                  <p class="btnGreen">
-                    <a href="#">Refer this Advisor</a>
-                  </p>
                 <?php endif; ?>
               </div>
             </aside>
             <article class="agent-main">
-              <?php if($is_logged_in): ?>
+              <?php if($is_logged_in && count($product_dd) > 0): ?>
                 <div class="btndiv">
                   <p class="btnGreen">
                     <a href="#modal-appointment">Consult Now</a>

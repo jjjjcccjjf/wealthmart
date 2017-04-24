@@ -13,6 +13,7 @@ foreach($users as $user){
 $user_ids = implode(',', $user_ids);
 # / We get all user IDs from the database
 
+$advisor_role = get_userdata($GLOBALS['current_user']->ID)->roles[0];
 
 if(isset($_POST['a_msg'])){
   $data['receiver_id'] = $_POST['receiver_id'];
@@ -24,8 +25,8 @@ if(isset($_POST['a_msg'])){
   die();
 }
 
-$msgs = $wpdb->get_results('SELECT * FROM advisor_inbox WHERE receiver_id = ' . $GLOBALS['current_user']->ID . ' AND type = 0', ARRAY_A); # 0 - standard message
-$sys_msgs = $wpdb->get_results('SELECT * FROM advisor_inbox WHERE receiver_id = ' . $GLOBALS['current_user']->ID . ' AND type > 0', ARRAY_A); # 1 - appointment
+$msgs = $wpdb->get_results('SELECT * FROM advisor_inbox WHERE receiver_id = ' . $GLOBALS['current_user']->ID . ' AND type = 0 id DESC', ARRAY_A); # 0 - standard message
+$sys_msgs = $wpdb->get_results('SELECT * FROM advisor_inbox WHERE receiver_id = ' . $GLOBALS['current_user']->ID . ' AND type > 0 ORDER BY id DESC', ARRAY_A); # 1 - appointment
 
 global $style;
 
@@ -82,8 +83,12 @@ get_header();
   <?php
   if(@$_GET['sc'] == 1){?>
     <div class="sc-msg">Message sent</div>
+    <?php
+  }else if(@$_GET['sc'] == 2){ ?>
+    <div class="sc-msg">Operation successful. Announcements are now being sent in the background.</div>
     <?php }
     ?>
+
 
     <div class="row">
 
@@ -131,10 +136,15 @@ get_header();
             System Messages
             <br>
             <sub>Appointments &amp; Announcements</sub>
-            <br>
-            <a href="#modal-announcement">
-              <button style="margin-top:13px;float:left;" class="reply-btn">Make announcement</button>
-            </a>
+            <?php if($advisor_role == 'administrator'): ?>
+              <br>
+              <a href="#modal-announcement">
+                <button style="margin-top:13px;float:left;" class="reply-btn">Make announcement</button>
+              </a>
+            <?php else: ?>
+              <div style="margin-bottom: -34px;"></div>
+              <!-- MOTHER OF ALL SPACES!!! -->
+            <?php endif; ?>
           </h2>
           <?php
 
@@ -156,6 +166,9 @@ get_header();
                 <?php if($msg['type'] == 1):?>
                   <hr>
                   <a href="#modal-reply" onclick="setReply('<?= $msg['id'] ?>')" class="reply-btn">Reply</a>
+                <?php elseif($msg['type'] == 2): ?>
+                  <hr>
+                  <p><sub>Notice: You cannot reply to this message. </sub></p>
                 <?php endif; ?>
               </div>
 
@@ -189,7 +202,9 @@ get_header();
             ajaxAnnounce();
           });
 
-          ajaxAnnounce = function(meta_id, meta_key){
+          ajaxAnnounce = function(){
+            tinyMCE.triggerSave(); // FOCKEYES!!
+
             $.ajax({
               url:"<?php echo site_url(). "/wp-content/themes/listify/ajax/announce.php"?>",
               type: "POST",
@@ -198,11 +213,12 @@ get_header();
                 'announcement': $('#announcement').val()
               },
               success:function(data){
-                alert(data);
+
               } // success end
             }); // ajax end
 
-            // window.location = "<?php echo site_url('advisor-inbox?sc=1#')?>";
+            // ASYNC NO JUTSU!!!!
+            window.location.href = "<?php echo site_url('advisor-inbox/?sc=2'); ?>";
           } //function body end
 
         })
