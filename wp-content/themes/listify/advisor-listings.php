@@ -58,22 +58,7 @@ get_header();
 
     <?php }
 
-    ?>
-
-    <div class="col-sm-4 card-div">
-      <a href="<?php echo site_url('view-profile') . "?a_id=" . $vendor_id['ID'] ?>">
-        <label class="pure-toggle card-user" for="pure-toggle">
-          <div class="header">
-          </div>
-          <div class="avatar">
-            <img src="<?php echo get_avatar_url($vendor_id['ID'])?>" alt="...">
-          </div>
-          <div class="text">
-            <h3><?php echo $name ?></h3>
-          </div>
-        </a>
-      </label>
-    </div> <!-- end card div -->
+    ?> 
   </div>
 
   <?php get_footer();

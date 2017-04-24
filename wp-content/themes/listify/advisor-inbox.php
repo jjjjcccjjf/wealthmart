@@ -14,8 +14,8 @@ if(isset($_POST['a_msg'])){
 
 }
 
-$inbox = $wpdb->get_results('SELECT * FROM advisor_inbox WHERE receiver_id = ' . $GLOBALS['current_user']->ID . ' AND is_appointment = 0', ARRAY_A);
-$appointments = $wpdb->get_results('SELECT * FROM advisor_inbox WHERE receiver_id = ' . $GLOBALS['current_user']->ID . ' AND is_appointment = 1', ARRAY_A);
+$msgs = $wpdb->get_results('SELECT * FROM advisor_inbox WHERE receiver_id = ' . $GLOBALS['current_user']->ID . ' AND type = 0', ARRAY_A); # 0 - standard message
+$sys_msgs = $wpdb->get_results('SELECT * FROM advisor_inbox WHERE receiver_id = ' . $GLOBALS['current_user']->ID . ' AND type > 0', ARRAY_A); # 1 - appointment
 
 global $style;
 
@@ -65,8 +65,8 @@ get_header();
 
         <?php
 
-        if(count($inbox) > 0 ):
-          foreach($inbox as $msg){
+        if(count($msgs) > 0 ):
+          foreach($msgs as $msg){
 
             $first_name = get_user_meta($msg['sender_id'], 'first_name', true);
             $last_name = get_user_meta($msg['sender_id'], 'last_name', true);
@@ -99,12 +99,16 @@ get_header();
         </div>
 
         <div class="col-md-6">
-          <h2>Appointments</h2>
+          <h2>
+            System Messages
+            <br>
+            <sub>Appointments &amp; Announcements</sub>
+          </h2>
 
           <?php
 
-          if(count($appointments) > 0 ):
-            foreach($appointments as $msg){
+          if(count($sys_msgs) > 0 ):
+            foreach($sys_msgs as $msg){
 
               $first_name = get_user_meta($msg['sender_id'], 'first_name', true);
               $last_name = get_user_meta($msg['sender_id'], 'last_name', true);
@@ -118,15 +122,17 @@ get_header();
                 <hr>
                 <p><?php echo $msg['message'] ?></p>
                 <input type="hidden" id="receiver_<?= $msg['id'] ?>" value="<?= $msg['sender_id'] ?>">
-                <hr>
-                <a href="#modal-reply" onclick="setReply('<?= $msg['id'] ?>')" class="reply-btn">Reply</a>
+                <?php if($msg['type'] == 1):?>
+                  <hr>
+                  <a href="#modal-reply" onclick="setReply('<?= $msg['id'] ?>')" class="reply-btn">Reply</a>
+                <?php endif; ?>
               </div>
 
               <?php }
             else:
               ?>
               <div class="inbox-card" >
-                <p>No new appointments.</p>
+                <p>No new messages.</p>
               </div>
             <?php endif;
             ?>

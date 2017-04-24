@@ -50,7 +50,7 @@ if(isset($_POST['apt_btn'])){
   $message = "
   <p>Hello, <strong>$advisor_name!</strong> You are receiving this message because
   <strong>$cust_name</strong> would like to avail your product/service entitled
-  <em>$product->post_title</em> at <strong>$apt_datetime</strong>.</p>
+  <em>$product->post_title</em> on <strong>$apt_datetime</strong>.</p>
   <p>You will receive an email notification once the payment has been verified.</p>
   <p><sub>Notice: This is a system generated message. Replying to this message will message <strong>$cust_name</strong></sub></p>
   ";
@@ -59,7 +59,7 @@ if(isset($_POST['apt_btn'])){
   $data['sender_id'] = $GLOBALS['current_user']->ID;
 
   $data['message'] = $message;
-  $data['is_appointment'] = 1;
+  $data['type'] = 1; # 1 = appointment
   $wpdb->insert('advisor_inbox', $data);
 
   WC()->cart->add_to_cart($_POST['product_id']);
