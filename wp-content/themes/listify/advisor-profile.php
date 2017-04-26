@@ -265,7 +265,7 @@ else:
               <?php if($is_logged_in && count($product_dd) > 0): ?>
                 <div class="btndiv">
                   <p class="btnGreen">
-                    <a href="#modal-appointment">Consult Now</a>
+                    <a href="#modal-appointment">Book an Appointment</a>
                   </p>
                 </div>
                 <h3 class="experience-label">
