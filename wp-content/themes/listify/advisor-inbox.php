@@ -25,7 +25,7 @@ if(isset($_POST['a_msg'])){
   die();
 }
 
-$msgs = $wpdb->get_results('SELECT * FROM advisor_inbox WHERE receiver_id = ' . $GLOBALS['current_user']->ID . ' AND type = 0 id DESC', ARRAY_A); # 0 - standard message
+$msgs = $wpdb->get_results('SELECT * FROM advisor_inbox WHERE receiver_id = ' . $GLOBALS['current_user']->ID . ' AND type = 0 ORDER BY id DESC', ARRAY_A); # 0 - standard message
 $sys_msgs = $wpdb->get_results('SELECT * FROM advisor_inbox WHERE receiver_id = ' . $GLOBALS['current_user']->ID . ' AND type > 0 ORDER BY id DESC', ARRAY_A); # 1 - appointment
 
 global $style;
