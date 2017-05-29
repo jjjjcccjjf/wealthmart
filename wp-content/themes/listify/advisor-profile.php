@@ -47,7 +47,7 @@ if(isset($_POST['apt_btn'])){
   $product_meta = get_post_meta($_POST['product_id']);
   $product = get_post($_POST['product_id']);
 
-  $message = "
+  $advisor_msg = "
   <p>Hello, <strong>$advisor_name!</strong> You are receiving this message because
   <strong>$cust_name</strong> would like to avail your product/service entitled
   <em>$product->post_title</em> on <strong>$apt_datetime</strong>.</p>
@@ -55,13 +55,32 @@ if(isset($_POST['apt_btn'])){
   <p><sub>Notice: This is a system generated message. Replying to this message will message <strong>$cust_name</strong></sub></p>
   ";
 
-  $data['receiver_id'] = $_GET['a_id']; # Advisor to have an appointment with
-  $data['sender_id'] = $GLOBALS['current_user']->ID;
 
-  $data['message'] = $message;
-  $data['type'] = 1; # 1 = appointment
-  $wpdb->insert('advisor_inbox', $data);
+  # advisor stuffs
+  $advisor_data['receiver_id'] = $_GET['a_id']; # Advisor to have an appointment with
+  $advisor_data['sender_id'] = $GLOBALS['current_user']->ID;
 
+  $advisor_data['message'] = $advisor_msg;
+  $advisor_data['type'] = 1; # 1 = appointment
+  $wpdb->insert('advisor_inbox', $advisor_data);
+  # / advisor stuffs
+
+  # customer stuffs
+  $customer_data['receiver_id'] = $GLOBALS['current_user']->ID; # Receive this yourself
+  $customer_data['sender_id'] = $_GET['a_id']; # Store advisor have an appointment with
+
+  $customer_msg = "
+  <p>Hello, <strong>$cust_name!</strong> You are receiving this message because
+  you tried to avail a product/service entitled
+  <em>$product->post_title</em> on <strong>$apt_datetime</strong>. from <strong>$advisor_name</strong></p>
+  <p>Please check your cart to checkout and complete your purchase.</p>
+  <p><sub>Notice: This is a system generated message. Replying to this message will message <strong>$advisor_name</strong></sub></p>
+  ";
+
+  $customer_data['message'] = $customer_msg;
+  $customer_data['type'] = 1; # 1 = appointment
+  $wpdb->insert('advisor_inbox', $customer_data);
+  # /customer stuffs
   WC()->cart->add_to_cart($_POST['product_id']);
 
   header('Location: ' . site_url('view-profile?sc=2&a_id=' . $_GET['a_id']. "#"));
@@ -374,7 +393,7 @@ else:
 
                 <hr>
 
-                <h3>Rates per Consultation</h3>
+                <h3>Rate per Consultation</h3>
                 <section class="agent-content">
                   <?php
                   $args = array(

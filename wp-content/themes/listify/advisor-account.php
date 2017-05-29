@@ -1,16 +1,7 @@
-
 <?php
 /*
 Template Name: Advisor Account
 */
-get_header();
-/**
-* /classes folder are loaded inside the header
-* @var [type]
-*/
-
-global $style;
-
 
 if($_POST){
 
@@ -51,7 +42,7 @@ if($_POST){
 				$wpdb->insert('advisor_details_meta', $meta_data);
 
 			} else {
-				echo "error";
+				// echo "error";
 			}
 		}
 	}
@@ -151,7 +142,15 @@ if($_POST){
 	}
 
 	header('Location: ' . site_url('advisor-account?sc=1#'));
+	die();
 }
+
+get_header();
+global $style;
+
+/**
+* /classes folder are loaded inside the header
+*/
 
 $blog_style = get_theme_mod( 'content-blog-style', 'default' );
 $style = 'grid-standard' == $blog_style ? 'standard' : 'cover';
@@ -209,11 +208,11 @@ $name = $first_name . " " . $last_name;
 
 
 ?>
-<?php if(@$_GET['sc'] == 1){ ?>
-	<div class="sc-msg">Profile updated.</div>
-	<?php } ?>
 	<form method="POST" enctype="multipart/form-data">
 		<div class="container">
+			<?php if(@$_GET['sc'] == 1){ ?>
+				<div class="sc-msg">Profile updated.</div>
+				<?php } ?>
 			<section class="listing-banner" style="background: url(<?php echo theme_url; ?>images/bannerimg.jpg) no-repeat center center; background-size: cover;">
 				<aside>
 					<h1><?php echo $name ?>
@@ -481,7 +480,7 @@ $name = $first_name . " " . $last_name;
 
 <hr>
 
-<h3>Rates per Consultation
+<h3>Rate per Consultation
 	<!--<button>
 	<i class="fa fa-pencil-square" aria-hidden="true"></i> Add
 </button>
@@ -496,7 +495,7 @@ $name = $first_name . " " . $last_name;
 	$args = array(
 		'post_type' => 'product',
 		'posts_per_page' => 12,
-		'author' => 28
+		'author' => $GLOBALS['current_user']->ID
 	);
 	$query = new WP_Query( $args );
 	$posts = $query->posts;

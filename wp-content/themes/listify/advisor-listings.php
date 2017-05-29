@@ -47,7 +47,9 @@ get_header();
           <div class="header">
           </div>
           <div class="avatar">
-            <img src="<?php echo get_avatar_url($vendor_id['ID'])?>" alt="...">
+            <!-- <img src="<?php #echo get_avatar_url($vendor_id['ID'])?>" alt="..."> -->
+            <?php $listing_photo = ($advisor_details['listing_photo'] != "") ? $advisor_details['listing_photo'] : 'https://developersushant.files.wordpress.com/2015/02/no-image-available.png'; ?>
+            <img src="<?php echo $listing_photo ?>" alt="...">
           </div>
           <div class="text">
             <h3><?php echo $name ?></h3>
@@ -58,7 +60,7 @@ get_header();
 
     <?php }
 
-    ?> 
+    ?>
   </div>
 
   <?php get_footer();

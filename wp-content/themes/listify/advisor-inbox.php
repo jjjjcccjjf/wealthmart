@@ -110,7 +110,8 @@ get_header();
             <div class="inbox-card" >
               <p>
                 From: <span id="name_<?= $msg['id'] ?>"><?php echo $sender_name ?></span>
-                <a href="mailto:<?php echo $user_email ?>">&lt;<?php echo $user_email ?>&gt;</a>
+                <a href="mailto:<?php echo $user_email ?>">&lt;<?php echo $user_email ?>&gt;</a><br>
+                <?= date('F d, Y h:i:sA', strtotime($msg['created_at'])) ?>
               </p>
               <hr>
               <p><?php echo $msg['message'] ?></p>
@@ -158,7 +159,8 @@ get_header();
 
               ?>
               <div class="inbox-card" >
-                <p>From: System</p>
+                <p>From: System<br>
+                <?= date('F d, Y h:i:sA', strtotime($msg['created_at'])) ?></p>
                 <span style="display:none" id="name_<?= $msg['id'] ?>"><?php echo $sender_name ?></span>
                 <hr>
                 <p><?php echo $msg['message'] ?></p>
