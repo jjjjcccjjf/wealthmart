@@ -6,3 +6,4 @@
 1. Make page for each new template
 1. Add `Recently Purchased Products` shortcode to `Account` page
 1. Edit ajax files hard path
+1. Hide messages if user is not logged in
